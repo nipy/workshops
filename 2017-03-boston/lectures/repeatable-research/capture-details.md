@@ -18,8 +18,6 @@ layout: false
 
 ### Introduction
 
-### Tools
-
 ### Exercises
 
 ### Review questions
@@ -205,9 +203,9 @@ layout: false
 
 1. Using `script`
 
-2. An example of `strace` output
+2. Using `reprozip`
 
-3. Using `reprozip`
+.footnote[.red[\*] We will skip `strace` for this lesson.]
 ]
 ---
 class: middle
@@ -250,11 +248,30 @@ $ cat typescript | grep '^# [^#]'
 ---
 ## Using `reprozip`
 
+If you don't have reprozip you can install it into a python environment.
+```bash
+$ pip install reprozip
+```
+--
 As with many commands, you can type `reprozip` to get help
 ```bash
 $ reprozip
+...
+commands:
+
+    usage_report        Enables or disables anonymous usage reports
+    trace               Runs the program and writes out database and
+                        configuration file
+    testrun             Runs the program and writes out the database contents
+    reset               Resets the configuration file
+    pack                Packs the experiment according to the current
+                        configuration
+    combine             Combine multiple traces into one (possibly as
+                        subsequent runs)
 ```
---
+---
+## Using `reprozip`
+
 For a first example we will use `reprozip` on running `bet` from the command line.
 ```bash
 $ reprozip trace -d bet-trace bet sub-01_T1w.nii.gz brain
@@ -401,3 +418,110 @@ other_files:
   - "/src/workdir" # Directory
   - "/src/workdir/sub-01_T1w.nii.gz" # 13.07 MB
 ```
+---
+## Packing this analysis
+
+First, we can pack this analysis into a reprozip pack file.
+```bash
+$ reprozip pack -d bet-trace better.rpz
+$ ls -alh better.rpz
+-rw-r--r-- 1 root root 17M Mar 22 18:06 better.rpz
+```
+This file now contains all the data and code to reproduce the analysis.
+
+--
+
+Let's quit docker, and get a container with no FSL, no Neurodebian.
+```bash
+$ docker pull continuumio/miniconda
+$ docker run -it --rm -v $PWD:/src continuumio/miniconda bash
+```
+---
+## Replaying the analyis
+
+Now we need the counterpart of `reprozip` a.k.a .red[`reprounzip`].
+
+```bash
+$ pip install reprounzip
+$ reprounzip
+...
+subcommands:
+
+    usage_report
+                 Enables or disables anonymous usage reports
+    chroot       Unpacks the files and run with chroot
+    directory    Unpacks the files in a directory and runs with PATH and
+                 LD_LIBRARY_PATH
+    graph        Generates a provenance graph from the trace data
+    info         Prints out some information about a pack
+    installpkgs  Installs the required packages on this system
+    showfiles    Prints out input and output file names
+```
+---
+## Replaying this analysis
+
+We will use the `chroot` form of replaying the analysis, allowing isolation.
+```bash
+$ reprounzip chroot -h
+usage: reprounzip chroot [-h] [--version]
+
+Unpacks the files and run with chroot
+
+    setup/create    creates the directory (needs the pack filename)
+    setup/mount     mounts --bind /dev and /proc inside the chroot
+                    (do NOT rm -Rf the directory after that!)
+    upload          replaces input files in the directory
+                    (without arguments, lists input files)
+    run             runs the experiment
+    download        gets output files
+                    (without arguments, lists output files)
+    destroy/unmount unmounts /dev and /proc from the directory
+    destroy/dir     removes the unpacked directory
+```
+--
+So let's unpack the reprozip file into a directory called `better`.
+```bash
+$ reprounzip chroot setup --dont-bind-magic-dirs better.rpz better
+```
+---
+## Replaying this analysis
+
+Let's look at what the setup unpacked
+```bash
+$ ls better
+config.yml  inputs.tar.gz  root
+$ ls better/root
+bin  etc  lib  lib64  src  usr
+$ ls better/root/src/workdir/
+sub-01_T1w.nii.gz
+```
+
+--
+Now rerun the analysis
+```bash
+$ reprounzip chroot run better
+
+*** Command finished, status: 0
+
+$ ls better/root/src/workdir/
+brain.nii.gz  sub-01_T1w.nii.gz
+```
+---
+## Review questions
+
+1. What does `script` help you with?
+
+2. What types of information does `reprozip` capture about an analysis?
+
+3. What do you need to run `reprozip`?
+
+4. On what platforms can you run `reprozip`?
+
+5. What do you need to run `reprounzip`?
+
+6. On what platforms can you run `reprozip`?
+
+---
+class: middle center
+
+## Any questions?
