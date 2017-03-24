@@ -18,7 +18,6 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends bzip2 \
                                                 zip \
                                                 vim \
                                                 emacs-nox \
-                                                build-essential \
                                                 graphviz
 
 ENV NEURODEBIAN_URL http://neuro.debian.net/lists/jessie.de-md.full
@@ -34,7 +33,8 @@ RUN curl -sSL $NEURODEBIAN_URL | sudo tee /etc/apt/sources.list.d/neurodebian.so
 USER $NB_USER
 
 # Make sure that necessary packages are installed
-RUN conda install --quiet --yes nomkl \
+RUN conda install --quiet --yes -c clinicalgraphics vtk=7.1.0 && \
+    conda install --quiet --yes nomkl \
                                 matplotlib \
                                 pandas \
                                 pip \
@@ -49,16 +49,14 @@ RUN conda install --quiet --yes nomkl \
                                 pycrypto \
                                 cryptography \
                                 boto \
-                                mayavi \
                                 pytest \
-                                cmake \
                                 pythreejs \
-                                bqplot && \
+                                bqplot \
+                                mayavi && \
     conda clean -tipsy && \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
     jupyter nbextension enable --py --sys-prefix pythreejs && \
     jupyter nbextension enable --py --sys-prefix bqplot
-
 
 # Import matplotlib the first time to build the font cache.
 ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
@@ -92,6 +90,7 @@ RUN conda remove -yq nipype && \
 #----------------------------------------
 USER root
 RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /boot /media /mnt /srv
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /boot /media /mnt /srv && \
+    chmod a+w /tmp
 
 USER $NB_USER
