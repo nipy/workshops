@@ -77,7 +77,8 @@ RUN pip install --upgrade --quiet pip && \
 RUN conda remove -yq nipype && \
     pip install https://github.com/nipy/nibabel/archive/master.zip \
              https://github.com/nipy/nipype/archive/master.zip \
-             https://github.com/nilearn/nilearn/archive/master.zip
+             https://github.com/nilearn/nilearn/archive/master.zip && \
+    rm -rf ~/.cache/pip
 
 #----------------------------------------
 # Clear apt cache and other empty folders
