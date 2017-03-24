@@ -18,7 +18,8 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends bzip2 \
                                                 zip \
                                                 vim \
                                                 emacs-nox \
-                                                build-essential
+                                                build-essential \
+                                                graphviz
 
 ENV NEURODEBIAN_URL http://neuro.debian.net/lists/jessie.de-md.full
 RUN curl -sSL $NEURODEBIAN_URL | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list && \
@@ -34,7 +35,6 @@ USER $NB_USER
 
 # Make sure that necessary packages are installed
 RUN conda install --quiet --yes nomkl \
-                                graphviz \
                                 matplotlib \
                                 pandas \
                                 pip \
