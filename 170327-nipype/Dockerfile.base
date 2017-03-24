@@ -1,0 +1,87 @@
+# This Dockerfile was based off: https://github.com/miykael/nipype_env/level0
+# Changes include working with Python 3 and updates to base package layer
+
+FROM jupyter/base-notebook
+MAINTAINER Satrajit Ghosh <satra@mit.edu>
+
+#---------------------------------------------
+# Update OS dependencies and setup neurodebian
+#---------------------------------------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends bzip2 \
+                                                ca-certificates \
+                                                curl \
+                                                tree \
+                                                unzip \
+                                                wget \
+                                                xvfb \
+                                                zip \
+                                                vim \
+                                                emacs-nox \
+                                                build-essential
+
+ENV NEURODEBIAN_URL http://neuro.debian.net/lists/jessie.de-md.full
+RUN curl -sSL $NEURODEBIAN_URL | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list && \
+    apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
+    apt-get update -qq && apt-get install -yq --no-install-recommends \
+                                                git-annex-standalone
+
+#-------------------------------------------------
+# Update and install conda dependencies for nipype
+#-------------------------------------------------
+USER $NB_USER
+
+# Make sure that necessary packages are installed
+RUN conda install --quiet --yes nomkl \
+                                graphviz \
+                                matplotlib \
+                                pandas \
+                                pip \
+                                scikit-image \
+                                seaborn \
+                                cython \
+                                dipy \
+                                nilearn \
+                                reprozip \
+                                reprounzip \
+                                prov \
+                                pycrypto \
+                                cryptography \
+                                boto \
+                                mayavi \
+                                pytest \
+                                cmake && \
+    conda clean -tipsy
+
+# Import matplotlib the first time to build the font cache.
+ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
+RUN MPLBACKEND=Agg $CONDA_DIR/bin/python -c "import matplotlib.pyplot"
+
+#-------------------------------------------------------------
+# Install nipype from conda-forge to pull in most dependencies
+#-------------------------------------------------------------
+# Install Nipype dependencies
+RUN conda install -yq nipype
+
+#--------------------------------
+# Install update pip dependencies
+#--------------------------------
+RUN pip install --upgrade --quiet pip && \
+    pip install --upgrade --quiet nipy && \
+    pip install --quiet datalad && \
+    rm -rf ~/.cache/pip
+
+#---------------------------------------------------------
+# Install newest version of nipype and nibabel from Github
+#---------------------------------------------------------
+RUN conda remove -yq nipype && \
+    pip install https://github.com/nipy/nibabel/archive/master.zip \
+             https://github.com/nipy/nipype/archive/master.zip
+
+#----------------------------------------
+# Clear apt cache and other empty folders
+#----------------------------------------
+USER root
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /boot /media /mnt /srv
+
