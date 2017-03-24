@@ -51,8 +51,14 @@ RUN conda install --quiet --yes nomkl \
                                 boto \
                                 mayavi \
                                 pytest \
-                                cmake && \
-    conda clean -tipsy
+                                cmake \
+                                pythreejs \
+                                bqplot && \
+    conda clean -tipsy && \
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
+    jupyter nbextension enable --py --sys-prefix pythreejs && \
+    jupyter nbextension enable --py --sys-prefix bqplot
+
 
 # Import matplotlib the first time to build the font cache.
 ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
@@ -76,9 +82,9 @@ RUN pip install --upgrade --quiet pip && \
 # Install newest version of nipype and nibabel from Github
 #---------------------------------------------------------
 RUN conda remove -yq nipype && \
-    pip install https://github.com/nipy/nibabel/archive/master.zip \
+    pip install https://github.com/nipy/nibabel/archive/ca977abeb77f95ed3a40b7b89c310b286b9885b7.zip \
              https://github.com/nipy/nipype/archive/master.zip \
-             https://github.com/nilearn/nilearn/archive/master.zip && \
+             https://github.com/nilearn/nilearn/archive/87c12efe14c005f1c916f76358639b55a306fb06.zip && \
     rm -rf ~/.cache/pip
 
 #----------------------------------------
@@ -88,3 +94,4 @@ USER root
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /boot /media /mnt /srv
 
+USER $NB_USER
