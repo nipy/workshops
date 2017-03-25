@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Using version control for code and data</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif);
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body {
+        font-family: 'Droid Serif';
+      }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: 400;
+        margin-bottom: 0;
+      }
+      .remark-slide-content h1 { font-size: 3em; }
+      .remark-slide-content h2 { font-size: 2em; }
+      .remark-slide-content h3 { font-size: 1.6em; }
+      .footnote {
+        position: absolute;
+        bottom: 3em;
+      }
+      li p { line-height: 1.25em; }
+      .red { color: #fa0000; }
+      .blue { color: #0000fa; }
+      .green { color: #698b69; }
+      .large { font-size: 2em; }
+      a, a > code {
+        color: rgb(249, 38, 114);
+        text-decoration: none;
+      }
+      code {
+        background: #e7e8e2;
+        border-radius: 5px;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-code-line-highlighted     { background-color: #373832; }
+      .pull-left {
+        float: left;
+        width: 47%;
+      }
+      .pull-right {
+        float: right;
+        width: 47%;
+      }
+      .pull-right ~ p {
+        clear: both;
+      }
+      #slideshow .slide .content code {
+        font-size: 0.8em;
+      }
+      #slideshow .slide .content pre code {
+        font-size: 0.9em;
+        padding: 15px;
+      }
+      .inverse {
+        background: #272822;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+      .inverse h1, .inverse h2 {
+        color: #f3f3f3;
+        line-height: 0.8em;
+      }
+
+      /* Slide-specific styling */
+      #slide-inverse .footnote {
+        bottom: 12px;
+        left: 20px;
+      }
+      #slide-how .slides {
+        font-size: 0.9em;
+        position: absolute;
+        top:  151px;
+        right: 140px;
+      }
+      #slide-how .slides h3 {
+        margin-top: 0.2em;
+      }
+      #slide-how .slides .first, #slide-how .slides .second {
+        padding: 1px 20px;
+        height: 90px;
+        width: 120px;
+        -moz-box-shadow: 0 0 10px #777;
+        -webkit-box-shadow: 0 0 10px #777;
+        box-shadow: 0 0 10px #777;
+      }
+      #slide-how .slides .first {
+        background: #fff;
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        z-index: 1;
+      }
+      #slide-how .slides .second {
+        position: relative;
+        background: #fff;
+        z-index: 0;
+      }
+
+      /* Two-column layout */
+      .left-column {
+        color: #777;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+        .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+        }
+      .right-column {
+        width: 75%;
+        float: right;
+        padding-top: 1em;
+      }
+      /* Two-column layout (40% left) */
+      .left-column2 {
+        color: #777;
+        width: 40%;
+        height: 92%;
+        float: left;
+      }
+        .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+        }
+      .right-column2 {
+        width: 55%;
+        float: right;
+        padding-top: 1em;
+      }
+      /* Two-column layout (60% left) */
+      .left-column3 {
+        color: #777;
+        width: 60%;
+        height: 92%;
+        float: left;
+      }
+        .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+        }
+      .right-column3 {
+        width: 35%;
+        float: right;
+        padding-top: 1em;
+      }
+      /* Two-column layout (flipped) */
+      .left-column-inv {
+        color: #777;
+        width: 75%;
+        height: 92%;
+        float: left;
+      }
+        .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+        }
+      .right-column-inv {
+        width: 20%;
+        float: right;
+        padding-top: 1em;
+      }
+    </style>
+  </head>
+<body>
+<!-- textarea with actual content to benefit from livereload. Later --
+  -- could be moved into presentation.md and that script reenabled -->
+<textarea id="source">
+name: inverse
+layout: true
+class: center, middle, inverse
+---
+# Using version control for code and data
+### yoh@dartmouth.edu
+#### License: CC0
+---
+layout: false
+.left-column[
+  ## Outline
+]
+.right-column[
+
+### Learning objectives
+
+### Requirements
+
+### Introduction
+
+- [git](https://git-scm.com)
+- [git-annex](http://git-annex.branchable.com)
+- [datalad](http://datalad.org)
+
+### Hands-on
+
+### Review questions
+]
+---
+.left-column[
+## Learning objectives
+]
+.right-column[
+- Why to use version control systems (VCS)
+
+- How git "works"
+  - what is inside `.git/` black box
+
+- How git-annex and DataLad build atop git
+
+- How to obtain, manage, and share code and data using VCS
+]
+---
+.left-column[
+## Learning objectives
+## Requirements
+]
+.right-column[
+
+- Git basics
+- GitHub basics
+  - need to have a [github.com](http://github.com) account
+
+]
+---
+.left-column[
+## Introduction
+]
+.right-column[
+
+- Why to use version control systems (VCS)?
+   - because we do it already but it hurts <img src="pics/phd052810s.png" style="width: 80%" />
+   - because it makes it easy to collaborate
+   - because it is a great 'backup'
+   - ...
+   - from future "repeatable-research" (still apply)
+      - to document/disseminate what was done
+      - to repeat an analysis
+      - to compare across analyses
+      - to understand sources of variance
+]
+---
+.left-column[
+## Introduction
+## Git Ecosystem
+]
+.right-column[
+- **[`git`](https://git-scm.com)** (tool)
+
+    Git is a fast, scalable, distributed revision control system with an
+    unusually rich command set that provides both high-level operations and
+    full access to internals [`man git`]
+
+    the stupid content tracker. [`man git`]
+
+	**why?** because Linus needed a FOSS VCS to develop Linux kernel
+
+- **[`github.com`](https://github.com)** (hosting website)
+
+       GitHub is a web-based Git or version control repository and
+       Internet hosting service. It offers [..] access
+       control and several collaboration features such as bug
+       tracking, feature requests, task management, and wikis for
+       every project [[wikipedia](https://en.wikipedia.org/wiki/GitHub)]
+
+	**why?** because **git** is great, but there were no public hosting
+]
+
+---
+
+.left-column[
+## Introduction
+## Git ecosystem
+]
+.right-column[
+
+- **[`git-annex`](http://git-annex.branchable.com)** (tool)
+
+   git-annex allows managing files with git, without checking the file
+   contents into git [`man git-annex`]
+
+   git-annex is a distributed file synchronization system written in
+   Haskell. It aims to solve the problem of sharing and synchronizing
+   collections of large files independent from a commercial service or
+   even a central server
+   [[wikipedia](https://en.wikipedia.org/wiki/Git-annex)]
+
+   **why?** because **git** is great to version text but sucks for data
+
+- **[`datalad`](http://datalad.org)** (tool, distribution)
+
+   DataLad provides a unified data distribution with the convenience
+   of git-annex repositories as a backend.  DataLad [..]  allow to
+   manipulate (obtain, create, update, publish, etc.) datasets and
+   their collections. [`man datalad`]
+
+   **why?** because **git-annex** is great and we have lots of
+   data already -- we need a _unified distribution_ to index and access it all
+
+]
+
+---
+.left-column[
+## Introduction
+## Git ecosystem
+## Quirks
+]
+.right-column[
+
+- **git** has a powerful and very flexible configuration system.  Consider tuning up your `~/.gitconfig` (later)
+
+- There is a number of great and eye-candy GUI tools for **git**, but through out this tutorial we will use command line and may be ugly looking but powerful [gitk](https://git-scm.com/docs/gitk)
+  for GUI navigation of the history (because it is a "standard" one)
+
+- On OS X `gitk` comes with `git` package e.g. via [brew](https://brew.sh/)
+
+- While using **git-annex** on Windows beware of the 260 characters
+  filename length (was addressed on some Windows 10)
+
+- DataLad does not "officially" support Windows at all at the moment
+]
+
+---
+.left-column[
+## Introduction
+## Git ecosystem
+## Quirks
+## Other "friends"
+]
+.right-column[
+
+- ** [etckeeper](http://etckeeper.branchable.com/) **
+
+- ** [Travis CI](http://www.travis-ci.org/) **
+
+- ** [CodeCov](https://codecov.io/) **
+
+]
+---
+.left-column[
+## Introduction
+## Git ecosystem
+## Quirks
+## Other "friends"
+## Hands-on
+]
+.right-column[
+
+1. Using `git` and `github.com`
+
+2. Using `git-annex`
+
+3. Using `datalad`
+
+]
+---
+class: middle
+## Let's get started
+
+```bash
+  ???  should we use nipype/workshops:latest-base ???
+  docker run -it --rm --security-opt seccomp:unconfined -v bids-data:/data
+    -v $PWD:/src/workdir test36:trace bash
+
+  root@b6d7839a5760:/src/workdir#
+```
+
+---
+## Using `git`: warm up round
+
+We will work with the  https://github.com/datalad/ds000114 repository.
+Let's establish rudimentary "contribute on GitHub" workflow
+
+1. `clone` to your local drive (it will become "origin")
+
+   - Q: how to make it in "read-only", i.e. so that even if you had permissions on github for that repository, you could not push back to the `origin`?
+
+2. "Fork" it on github.com into your account and add it locally as a "mine" remote
+
+3. "Contribute" by introducing some non-sense to any of the files in
+   the top directory, committing, and submitting a pull request (PR)?
+
+--
+
+**Q:** did you create a new (feature) branch to submit your PR?
+
+--
+
+**Q:** why generally you should submit PRs off a new branch?
+
+???
+TODO -- prepare asciinema
+TODO -- add a URL to detailed description of the workflow
+
+---
+## Using `git`: what is in the black box of .git
+
+`.git/` directory contains all information git needs to do its magic
+
+Let's investigate what is inside:
+```bash
+$ ls --group-directories-first -F .git/
+branches/  hooks/  info/  logs/  objects/  refs/
+config*  description  HEAD  index  packed-refs
+```
+
+Use your favorite command line tool(s) (e.g. cd, less, vim, cat) to
+investigate content of `objects/`, `refs/`, `HEAD` and `config`.
+
+--
+
+**Q:** what is contained under `objects/`?
+
+--
+
+**Q:** what is contained under `refs/`?
+
+--
+
+**Q:** what is contained in `HEAD`?
+
+---
+
+## Git functioning 101
+
+**git** maintains all content under `.git/objects`, and references
+'commits' containing trees of files using 'branches', and 'tags'.
+
+`git add` of any file "embeds" it into `.git/objects` and copies to
+other remotes during push/pull operations.
+
+`git push`, `git fetch` send objects between remotes, and update
+references (`heads` AKA `branches`, and `tags`).
+
+---
+
+## Let's discover the unknown
+
+Let's investigate some files under `sub-01/` sub-directory, e.g.
+
+```shell
+$ ls -l sub-01/anat/
+total 4
+lrwxrwxrwx 1 jovyan users 140 Mar 25 03:41 sub-01_T1w.nii.gz ->
+    ../../.git/annex/objects/QP/jm/MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz/MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz
+```
+
+Check the size (`du` command) of the `sub-*` and other directories in
+the tree, of `.git/objects`.
+
+---
+
+## Let's discover the unknown -- **git-annex**
+
+This repository is not just a regular **git** repository.  It is a
+**git-annex** repository.
+
+**git-annex** maintains large files content outside of `.git/objects`
+-- under `.git/annex/objects` _key store_ -- and replaces actual
+files with symbolic links pointing to those keys, which it then
+commits to git (symlinks do not occupy much of `.git/objects` storage).
+
+In addition, **git-annex** maintains `git-annex` branch within this
+repository (which is not intended to be checked out and manipulated
+directly), where it records information about locations of the data
+files (other clones, "special annex remotes", web urls).
+
+---
+
+## Let's see **git-annex** in action
+
+In case you want to retrieve any particular (or multiple, or all at
+once), use `git annex get` command:
+
+```shell
+$> git annex get sub-01/anat/sub-01_T1w.nii.gz
+(merging origin/git-annex into git-annex...)
+(recording state in git...)
+get sub-01/anat/sub-01_T1w.nii.gz curl: (22) The requested URL returned error: 404 Not Found
+
+  Failed to get annex.uuid configuration of repository origin
+(from web...) 
+/tmp/ds000114/.git/annex/tmp/MD5E-s867 100%[============================================================================>]   8.28M  4.46MB/s    in 1.9s    
+2017-03-25 01:17:33 URL:http://openneuro.s3.amazonaws.com/ds000114/ds000114_R2.0.0/uncompressed/sub-01/ses-test/anat/sub-01_ses-test_T1w.nii.gz?versionId=null [8677710/8677710] -> "/tmp/ds000114/.git/annex/tmp/MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz" [1]
+(checksum...) ok
+(recording state in git...)
+```
+
+Try downloading (`get`ing) few other files, since anyways you will need to use
+them later on, and see if their content becomes available (e.g. you
+could run `nib-ls` command some `.nii.gz` file(s).
+
+---
+
+## But what has just happened?
+
+- ```
+(merging origin/git-annex into git-annex...)
+(recording state in git...)
+```
+
+Upon first invocation of git-annex command it should initialize local
+`git annex`.  See what has changed to the list of files under `.git/`,
+content of `.git/config` and list of your local branches.
+
+- ```
+get sub-01/anat/sub-01_T1w.nii.gz curl: (22) The requested URL returned error: 404 Not Found
+```
+
+annex tried first to obtain that file from the `origin` remote, which
+is on github.  Github does not "support" git-annex, in that it does
+not allow it to upload binary to somewhere under `.git/annex/objects`
+on github.  That is why that initial download attempt has failed
+
+- ```
+Failed to get annex.uuid configuration of repository origin
+```
+
+As you might have discovered from looking at `.git/config` changes,
+your local repository now has a unique UUID associated with it.
+
+**git-annex** assigns a unique UUID to every clone of repository, so
+it could track which clones carry which files/keys.  Once again,
+github does not support storing annexed files, it doesn't support
+assignment of some UUID to its repositories either, and that is what
+git-annex here discovers and records -- in your `.git/config` now you
+have `annex-ignore = true` for the remote origin.
+
+
+
+## But what has just happened? (continued)
+
+- ```(from web...) 
+/tmp/ds000114/.git/annex/tmp/MD5E-s867 100%[============================================================================>]   8.28M  4.46MB/s    in 1.9s    
+2017-03-25 01:17:33 URL:http://openneuro.s3.amazonaws.com/ds000114/ds000114_R2.0.0/uncompressed/sub-01/ses-test/anat/sub-01_ses-test_T1w.nii.gz?versionId=null [8677710/8677710] -> "/tmp/ds000114/.git/annex/tmp/MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz" [1]
+(checksum...) ok
+(recording state in git...)
+```
+
+---
+## **git-annex** key anatomy
+
+Each file is replaced with a symlink to its key.  Each key (in our
+example `MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz`) is
+composed from multiple components separated with '-':
+
+- **backend** -- here `MD5E` (MD5 checksum + Extension), could be
+  SHA1, etc
+- s**size** -- size of the file in bytes
+- **backend value** -- here actual MD5
+- **extension** -- because backend had `E` in the end of its name,
+  extension of original file was added to the key 
+
+---
+
+For a first example we will use `reprozip` on running `bet` from the command line.
+```bash
+$ reprozip trace -d bet-trace bet sub-01_T1w.nii.gz brain
+```
+--
+This creates a `config.yml` file in the directory `bet-trace`
+```bash
+$ more bet-trace/config.yml
+```
+--
+We can take look at each section of this file.
+```bash
+$ cat bet-trace/config.yml | grep "^[^# -].*:"
+version: "0.8"
+runs: --> This is a list of reprozip runs
+inputs_outputs: --> These are the inputs and outputs of each run
+packages: --> These are packages from which files were used
+other_files: --> These are all files that were used during the process
+```
+---
+## Take a closer look at each section: `runs`
+
+`runs` is a list collecting information about each run save to a trace directory.
+
+```yaml
+runs:
+- architecture: x86_64
+  argv: [bet, sub-01_T1w.nii.gz, brain]
+  binary: /usr/lib/fsl/5.0/bet
+  distribution: [debian, stretch/sid]
+  environ: {
+    ACCEPT_INTEL_PYTHON_EULA: 'yes',
+    HOME: /root, HOSTNAME: 72bfac9cef1d, LANG: C.UTF-8, LC_ALL: C.UTF-8,
+    LD_LIBRARY_PATH: '/usr/lib/fsl/5.0:',
+    OMP_NUM_THREADS: '1', OS: Linux,
+    PATH: '/usr/local/miniconda/bin:/usr/lib/ruby/gems/2.3/bin:/bin::
+        /usr/lib/fsl/5.0:/usr/lib/afni/bin:/opt/freesurfer/bin:/opt/
+        freesurfer/fsfast/bin:/opt/freesurfer/tktools:/opt/freesurfer/
+        mni/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'}
+  exitcode: 0
+  gid: 0
+  hostname: 72bfac9cef1d
+  id: run0
+  system: [Linux, 4.9.12-moby]
+  uid: 0
+  workingdir: /src/workdir
+```
+---
+## Take a closer look at each section: `inputs_outputs`
+
+A description from `reprozip`
+```text
+# Input and output files
+
+# Inputs are files that are only read by a run; reprounzip can replace these
+# files on demand to run the experiment with custom data.
+# Outputs are files that are generated by a run; reprounzip can extract these
+# files from the experiment on demand, for the user to examine.
+# The name field is the identifier the user will use to access these files.
+```
+--
+The output from the run.
+```yaml
+inputs_outputs:
+- name: arg
+  path: /src/workdir/sub-01_T1w.nii.gz
+  written_by_runs: []
+  read_by_runs: [0] ---> This is an input
+- name: brain.nii.gz
+  path: /src/workdir/brain.nii.gz
+  written_by_runs: [0]  ----> This is an output
+  read_by_runs: []
+```
+---
+## Take a closer look at each section: `packages`
+
+A description from `reprozip`
+```text
+# These files come from packages; we can thus choose not to include them, as it
+# will simply be possible to install that package on the destination system
+# They are included anyway by default
+```
+--
+```yaml
+packages:
+    - name: "coreutils"
+      version: "8.25-2ubuntu2"
+      size: 6414336
+      packfiles: true
+      files:
+        # Total files used: 58.86 KB
+        # Installed package size: 6.12 MB
+        - "/bin/rm" # 58.86 KB
+    - name: "dash"
+      version: "0.5.8-2.1ubuntu2"
+      size: 247808
+      packfiles: true
+      files:
+        # Total files used: 150.46 KB
+        # Installed package size: 242.00 KB
+        - "/bin/dash" # 150.46 KB
+        - "/bin/sh" # Link to /bin/dash
+...
+```
+---
+## Take a closer look at each section: `packages`
+
+```yaml
+...
+  - name: "fsl-5.0-core"
+    version: "5.0.9-3~nd16.04+1"
+    size: 39678976
+    packfiles: true
+    files:
+      # Total files used: 2.33 MB
+      # Installed package size: 37.84 MB
+      - "/usr/lib/fsl/5.0" # Directory
+      - "/usr/lib/fsl/5.0/bet" # 13.41 KB
+      - "/usr/lib/fsl/5.0/bet2" # 71.14 KB
+      - "/usr/lib/fsl/5.0/imtest" # 4.29 KB
+      - "/usr/lib/fsl/5.0/libfslio.so" # 50.25 KB
+      - "/usr/lib/fsl/5.0/libmeshclass.so" # 94.34 KB
+      - "/usr/lib/fsl/5.0/libmiscmaths.so" # 571.57 KB
+      - "/usr/lib/fsl/5.0/libnewimage.so" # 1.46 MB
+      - "/usr/lib/fsl/5.0/libprob.so" # 31.66 KB
+      - "/usr/lib/fsl/5.0/libutils.so" # 50.45 KB
+      - "/usr/lib/fsl/5.0/remove_ext" # 4.06 KB
+      - "/usr/share/fsl/5.0/bin" # Link to /usr/lib/fsl/5.0
+...
+```
+---
+## Take a closer look at each section: `other_files`
+
+A description from `reprozip`
+```text
+# These files do not appear to come with an installed package -- you probably
+# want them packed
+```
+Additional files needed for the run
+```yaml
+other_files:
+  - "/etc/ld.so.cache" # 31.01 KB
+  - "/lib64/ld-linux-x86-64.so.2" # Link to /lib/x86_64-linux-gnu/ld-2.23.so
+  - "/src/workdir" # Directory
+  - "/src/workdir/sub-01_T1w.nii.gz" # 13.07 MB
+```
+---
+## Packing this analysis
+
+First, we can pack this analysis into a reprozip pack file.
+```bash
+$ reprozip pack -d bet-trace better.rpz
+$ ls -alh better.rpz
+-rw-r--r-- 1 root root 17M Mar 22 18:06 better.rpz
+```
+This file now contains all the data and code to reproduce the analysis.
+
+--
+
+Let's quit docker, and get a container with no FSL, no Neurodebian.
+```bash
+$ docker pull continuumio/miniconda
+$ docker run -it --rm -v $PWD:/src continuumio/miniconda bash
+```
+---
+## Replaying the analyis
+
+Now we need the counterpart of `reprozip` a.k.a .red[`reprounzip`].
+
+```bash
+$ pip install reprounzip
+$ reprounzip
+...
+subcommands:
+
+    usage_report
+                 Enables or disables anonymous usage reports
+    chroot       Unpacks the files and run with chroot
+    directory    Unpacks the files in a directory and runs with PATH and
+                 LD_LIBRARY_PATH
+    graph        Generates a provenance graph from the trace data
+    info         Prints out some information about a pack
+    installpkgs  Installs the required packages on this system
+    showfiles    Prints out input and output file names
+```
+---
+## Replaying this analysis
+
+We will use the `chroot` form of replaying the analysis, allowing isolation.
+```bash
+$ reprounzip chroot -h
+usage: reprounzip chroot [-h] [--version]
+
+Unpacks the files and run with chroot
+
+    setup/create    creates the directory (needs the pack filename)
+    setup/mount     mounts --bind /dev and /proc inside the chroot
+                    (do NOT rm -Rf the directory after that!)
+    upload          replaces input files in the directory
+                    (without arguments, lists input files)
+    run             runs the experiment
+    download        gets output files
+                    (without arguments, lists output files)
+    destroy/unmount unmounts /dev and /proc from the directory
+    destroy/dir     removes the unpacked directory
+```
+--
+So let's unpack the reprozip file into a directory called `better`.
+```bash
+$ reprounzip chroot setup --dont-bind-magic-dirs better.rpz better
+```
+---
+## Replaying this analysis
+
+Let's look at what the setup unpacked
+```bash
+$ ls better
+config.yml  inputs.tar.gz  root
+$ ls better/root
+bin  etc  lib  lib64  src  usr
+$ ls better/root/src/workdir/
+sub-01_T1w.nii.gz
+```
+
+--
+Now rerun the analysis
+```bash
+$ reprounzip chroot run better
+
+*** Command finished, status: 0
+
+$ ls better/root/src/workdir/
+brain.nii.gz  sub-01_T1w.nii.gz
+```
+---
+## Review questions
+
+1. XXX
+
+2. When do you want to use `git-annex`?
+
+3. When do you want to use `datalad`?
+
+---
+class: middle center
+
+## Any questions?
+
+---
+## Using `git`:  core **git** terminology  [`man gitglossary`]
+
+
+Let's rehearse
+
+  **Q:** what is a **commit**?
+
+--
+
+  **Q:** what is a **hexsha**?
+
+--
+
+  **Q:** what is a **branch**?
+
+--
+
+  **Q:** what is a **HEAD**?
+
+--
+
+  **Q:** what is a **detached HEAD**?
+
+--
+
+  **Q:** what is a **tag**?
+
+
+--
+
+Remember that
+
+```bash
+$> man git | grep stupid
+       git - the stupid content tracker
+```
+and that above nowhere a word "version" was used...
+
+since every commit is a version
+
+
+
+---
+## Using `git`:  core **git** actions  [`man git-<action>`]
+
+
+Let's rehearse
+
+   - **Q:** what is the effect of **commit** command?
+
+--
+
+   - **Q:** what is the effect of **branch** command?
+
+--
+
+   - **Q:** what is the effect of **merge** command?
+
+--
+
+   - **Q:** what is the effect of **fetch** command?
+
+--
+
+   - **Q:** what is the effect of **pull** command?
+
+--
+
+   - **Q:** what is the effect of **push** command?
+
+
+</textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"
+			type="text/javascript">
+    </script>
+	<script
+    remark.macros.scale = function (percentage) {
+     var url = this;
+     return '<img src="' + url + '" style="width: ' + percentage + '" />';
+    };
+   </script>
+	<script>
+    document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
+	</script>
+
+<script>
+    var slideshow = remark.create();
+    </script>
+<!--    <script type="text/javascript">
+      var slideshow = remark.create({
+          highlightStyle: 'monokai',
+          highlightLanguage: 'remark',
+          highlightLines: true,
+          sourceUrl: 'presentation.md'
+      });
+    </script> -->
+  </body>
+</html>
