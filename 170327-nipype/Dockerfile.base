@@ -73,7 +73,7 @@ RUN conda install -yq nipype
 #--------------------------------
 RUN pip install --upgrade --quiet pip && \
     pip install --upgrade --quiet nipy && \
-    pip install --quiet datalad bids && \
+    pip install --quiet datalad pybids==0.1 && \
     rm -rf ~/.cache/pip
 
 #---------------------------------------------------------
