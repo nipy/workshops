@@ -70,6 +70,7 @@ RUN MPLBACKEND=Agg $CONDA_DIR/bin/python -c "import matplotlib.pyplot"
 #-------------------------------------------------------------------
 RUN pip install --upgrade --quiet pip && \
     pip install --upgrade --quiet nipy && \
+    pip install --upgrade --quiet pydicom && \
     pip install --quiet datalad pybids==0.1 && \
     pip install --upgrade --quiet matplotlib --upgrade-strategy only-if-needed && \
     pip install --quiet https://github.com/nipy/nibabel/archive/ca977abeb77f95ed3a40b7b89c310b286b9885b7.zip \
