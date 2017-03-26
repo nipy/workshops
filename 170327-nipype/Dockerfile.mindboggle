@@ -1,48 +1,49 @@
 FROM nipype/workshops:latest-base
 MAINTAINER Satrajit Ghosh <satra@mit.edu>
 
-#-----------------------------------
-# Install packages that require root
-#-----------------------------------
-USER root
-RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
-        build-essential \
-        libsm-dev libx11-dev libxt-dev libxext-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    chown $NB_USER /opt
-
-#------------------------------------------
-# Install packages that can be done as user
-#------------------------------------------
-USER $NB_USER
-RUN conda install --quiet --yes cmake
-
 #-------------
 # Install ANTS
 #-------------
-RUN curl -sSL https://dl.dropbox.com/s/btep51gtglp7kwh/ants.tgz?dl=0 | tar zxv -C /
+# USER root
+# RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+#        build-essential && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# USER $NB_USER
+# WORKDIR /tmp
+# RUN git clone https://github.com/stnava/ANTs.git && \
+#    cd ANTs && \
+#    git checkout 767f756bc0e423cd503a24c806b6578aaeb5b82f && \
+#    mkdir build && cd build && cmake .. && make && \
+#    mkdir -p /opt/ants && \
+#    cp bin/* /opt/ants && cp ../Scripts/* /opt/ants && \
+#    cd /tmp && rm -rf ANTs
+RUN curl -sSL https://dl.dropbox.com/s/btep51gtglp7kwh/ants.tgz?dl=0 | tar zx -C /
+ENV ANTSPATH=/opt/ants/ \
+    PATH=/opt/ants:$PATH
 
 #-------------------
 # Install mindboggle
 #-------------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+        build-essential libsm-dev libx11-dev libxt-dev libxext-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+USER $NB_USER
+RUN conda install --quiet --yes cmake && \
+    conda clean -tipsy
 WORKDIR /tmp
 RUN git clone https://github.com/nipy/mindboggle && \
-    cd mindboggle && python setup.py install && \
-    cd vtk_cpp_tools && mkdir bin && cd bin && \
-    cmake .. -DCMAKE_EXE_LINKER_FLAGS="-L /opt/conda/lib" && \
-    make && cd .. && mkdir /opt/mindboggle && \
-    mv bin /opt/mindboggle/vtk_cpp_tools && \
-    cd /opt/mindboggle && \
-    wget -O templates.zip https://osf.io/rh9km/?action=download\&version=1 && \
+    cd mindboggle && git checkout cb37b8fa3b2bd1b272cb932e7f15c3ec110cb5d7 && \
+    python setup.py install && \
+    mkdir /opt/mindboggle && mkdir /opt/mindboggle/vtk_cpp_tools && \
+    cd /opt/mindboggle/vtk_cpp_tools && \
+    cmake /tmp/mindboggle/vtk_cpp_tools -DCMAKE_EXE_LINKER_FLAGS="-L /opt/conda/lib" && \
+    make && cd .. && rm -rf /tmp/mindboggle && \
+    curl -sSL https://osf.io/rh9km/?action=download\&version=2 -o templates.zip && \
     unzip templates.zip && rm -rf templates.zip __MACOSX
-
-#-----------------------------------------------------------------
-# Add all pieces to path and set appropriate environment variables
-#-----------------------------------------------------------------
-ENV ANTSPATH=/opt/ants/
 ENV vtk_cpp_tools=/opt/mindboggle/vtk_cpp_tools
-ENV PATH=/opt/ants:$PATH
 
 #----------------------------------------
 # Clear apt cache and other empty folders
