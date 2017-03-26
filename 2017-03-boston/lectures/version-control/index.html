@@ -313,6 +313,12 @@ layout: false
 
 - On OS X `gitk` comes with `git` package e.g. via [brew](https://brew.sh/)
 
+- **git** does not care about (empty) directories, since it care about
+  content and empty directory comes with no content
+
+- Some operations of **git-annex** (e.g. `metadata`) do not care about
+  "pure-git" files
+
 - While using **git-annex** on Windows beware of the 260 characters
   filename length (was addressed on some Windows 10)
 
@@ -345,11 +351,11 @@ layout: false
 ]
 .right-column[
 
-1. Using `git` and `github.com`
+1. `git` and `github.com`
 
-2. Using `git-annex`
+2. `git-annex`
 
-3. Using `datalad`
+3. `DataLad`
 
 ]
 ---
@@ -365,18 +371,22 @@ class: middle
 ```
 
 ---
-## Using `git`: warm up round
+## **git**: warm up round
 
 We will work with the  https://github.com/datalad/ds000114 repository.
 Let's establish rudimentary "contribute on GitHub" workflow
 
-1. `clone` to your local drive (it will become "origin")
+1. "Fork" it on github.com into your account
 
-   - Q: how to make it in "read-only", i.e. so that even if you had permissions on github for that repository, you could not push back to the `origin`?
+2. Clone your fork to your local environment (it will become an 'origin')
 
-2. "Fork" it on github.com into your account and add it locally as a "mine" remote
+3. Add the _official_ original repository as "upstream" remote
 
-3. "Contribute" by introducing some non-sense to any of the files in
+   - Q: how to make it in "read-only", i.e. so that even if you had
+     permissions on github for that repository, you could not push
+     back to the `origin`?
+
+4. "Contribute" by introducing some change to any of the files in
    the top directory, committing, and submitting a pull request (PR)?
 
 --
@@ -385,14 +395,14 @@ Let's establish rudimentary "contribute on GitHub" workflow
 
 --
 
-**Q:** why generally you should submit PRs off a new branch?
+**Q:** why generally you should submit PRs off a new (feature) branch?
 
 ???
 TODO -- prepare asciinema
-TODO -- add a URL to detailed description of the workflow
+TODO -- add a URL to detailed description/image of the workflow
 
 ---
-## Using `git`: what is in the black box of .git
+## **git**: what is in the black box of `.git/`
 
 `.git/` directory contains all information git needs to do its magic
 
@@ -406,21 +416,24 @@ config*  description  HEAD  index  packed-refs
 Use your favorite command line tool(s) (e.g. cd, less, vim, cat) to
 investigate content of `objects/`, `refs/`, `HEAD` and `config`.
 
---
+---
 
-**Q:** what is contained under `objects/`?
+## **git**: what is in the black box of `.git/`
 
---
-
-**Q:** what is contained under `refs/`?
-
---
-
-**Q:** what is contained in `HEAD`?
+.left-column2[
+**Qs:** what git contains ...
+- under `objects/`?
+- under `refs/`?
+- in `HEAD`?
+]
+.right-column2[
+<img src="pics/Git_Branch5.png" style="width: 100%" />
+[Git HowTo@ntu.edu.sg](https://www3.ntu.edu.sg/home/ehchua/programming/howto/Git_HowTo.html)
+]
 
 ---
 
-## Git functioning 101
+## **git** principles recap
 
 **git** maintains all content under `.git/objects`, and references
 'commits' containing trees of files using 'branches', and 'tags'.
@@ -431,11 +444,24 @@ other remotes during push/pull operations.
 `git push`, `git fetch` send objects between remotes, and update
 references (`heads` AKA `branches`, and `tags`).
 
+### Additional resources:
+- [Software Carpentry: Git](http://swcarpentry.github.io/git-novice/)
+
+  Detailed walk through Git functionality
+
+- [The curious coder’s guide to git](https://matthew-brett.github.io/curious-git/index.html)
+
+  Includes "A curious tale" bottom introduction to Git basic concepts
+
+- [How to get started with GIT and work with GIT Remote Repo](https://www3.ntu.edu.sg/home/ehchua/programming/howto/Git_HowTo.html)
+
+  A nice single page visual guide through many Git commands/workflows
+
 ---
 
 ## Let's discover the unknown
 
-Let's investigate some files under `sub-01/` sub-directory, e.g.
+Look at files under `sub-01/` sub-directory, e.g.
 
 ```shell
 $ ls -l sub-01/anat/
@@ -466,7 +492,7 @@ files (other clones, "special annex remotes", web urls).
 
 ---
 
-## Let's see **git-annex** in action
+## **git-annex** in action
 
 In case you want to retrieve any particular (or multiple, or all at
 once), use `git annex get` command:
@@ -478,22 +504,18 @@ $> git annex get sub-01/anat/sub-01_T1w.nii.gz
 get sub-01/anat/sub-01_T1w.nii.gz curl: (22) The requested URL returned error: 404 Not Found
 
   Failed to get annex.uuid configuration of repository origin
-(from web...) 
-/tmp/ds000114/.git/annex/tmp/MD5E-s867 100%[============================================================================>]   8.28M  4.46MB/s    in 1.9s    
+(from web...)
+/tmp/ds000114/.git/annex/tmp/MD5E-s867 100%[============================================================================>]   8.28M  4.46MB/s    in 1.9s
 2017-03-25 01:17:33 URL:http://openneuro.s3.amazonaws.com/ds000114/ds000114_R2.0.0/uncompressed/sub-01/ses-test/anat/sub-01_ses-test_T1w.nii.gz?versionId=null [8677710/8677710] -> "/tmp/ds000114/.git/annex/tmp/MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz" [1]
 (checksum...) ok
 (recording state in git...)
 ```
 
-Try downloading (`get`ing) few other files, since anyways you will need to use
-them later on, and see if their content becomes available (e.g. you
-could run `nib-ls` command some `.nii.gz` file(s).
-
 ---
 
-## But what has just happened?
+## **git-annex**: But what has just happened?
 
-- ```
+```shell
 (merging origin/git-annex into git-annex...)
 (recording state in git...)
 ```
@@ -502,7 +524,7 @@ Upon first invocation of git-annex command it should initialize local
 `git annex`.  See what has changed to the list of files under `.git/`,
 content of `.git/config` and list of your local branches.
 
-- ```
+```shell
 get sub-01/anat/sub-01_T1w.nii.gz curl: (22) The requested URL returned error: 404 Not Found
 ```
 
@@ -511,7 +533,11 @@ is on github.  Github does not "support" git-annex, in that it does
 not allow it to upload binary to somewhere under `.git/annex/objects`
 on github.  That is why that initial download attempt has failed
 
-- ```
+---
+
+## **git-annex**: But what has just happened? (continued)
+
+```shell
 Failed to get annex.uuid configuration of repository origin
 ```
 
@@ -525,19 +551,172 @@ assignment of some UUID to its repositories either, and that is what
 git-annex here discovers and records -- in your `.git/config` now you
 have `annex-ignore = true` for the remote origin.
 
-
-
-## But what has just happened? (continued)
-
-- ```(from web...) 
-/tmp/ds000114/.git/annex/tmp/MD5E-s867 100%[============================================================================>]   8.28M  4.46MB/s    in 1.9s    
+```shell
+(from web...)
+/tmp/ds000114/.git/annex/tmp/MD5E-s867 100%[============================================================================>]   8.28M  4.46MB/s    in 1.9s
 2017-03-25 01:17:33 URL:http://openneuro.s3.amazonaws.com/ds000114/ds000114_R2.0.0/uncompressed/sub-01/ses-test/anat/sub-01_ses-test_T1w.nii.gz?versionId=null [8677710/8677710] -> "/tmp/ds000114/.git/annex/tmp/MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz" [1]
 (checksum...) ok
 (recording state in git...)
 ```
 
+Finally **git-annex** found the file available in `web` special
+remote, downloaded the file, and recorded that change in git (within
+`git-annex` branch).
+
 ---
-## **git-annex** key anatomy
+
+## **git-annex**: `whereis` command
+
+shows what **git-annex** knows about locations of the file we just got:
+
+```shell
+ds000114$ git annex whereis sub-01/anat/sub-01_T1w.nii.gz 
+whereis sub-01/anat/sub-01_T1w.nii.gz (6 copies) 
+  	00000000-0000-0000-0000-000000000001 -- web
+   	03030b7b-99e3-409b-a7ac-bdf8b7bb2ef4 -- yoh@smaug:/mnt/btrfs/datasets/datalad/crawl-misc/nipype-workshop-2017/ds000114
+   	135caf6c-5166-45e8-8d46-4ff5e08985b3 -- datalad
+   	30a3fc48-d8bf-4c77-9b0b-975a9008b2bb -- yoh@smaug:/mnt/btrfs/datasets/datalad/crawl/openfmri/ds000114
+   	342feb78-6817-4165-b304-d194957fd51b -- jovyan@8ab73a30d4b0:~/datalad/workshops/nipype-2017/ds000114 [here]
+   	b2096681-bbfc-4e3a-a832-30d7bbf373a0 -- [datalad-archives]
+
+  web: http://openneuro.s3.amazonaws.com/ds000114/ds000114_R2.0.0/uncompressed/sub-01/ses-test/anat/sub-01_ses-test_T1w.nii.gz?versionId=null
+  web: http://openneuro.s3.amazonaws.com/ds000114/ds000114_R2.0.1/uncompressed/sub-01/ses-test/anat/sub-01_ses-test_T1w.nii.gz?versionId=null
+  web: http://openneuro.s3.amazonaws.com/ds000114/ds000114_unrevisioned/uncompressed/sub001/anatomy/highres001.nii.gz?versionId=null
+
+  datalad-archives: dl+archive:MD5E-s4665038365--fa2bbc92e47d15ce399e1a6722834f68.tgz#path=ds114_R2.0.0/sub-01/ses-test/anat/sub-01_ses-test_T1w.nii.gz&size=8677710
+  datalad-archives: dl+archive:MD5E-s4665193070--e3f00f47b231bde13fe6f2ee8f4c864d.zip#path=ds000114_R2.0.1/sub-01/ses-test/anat/sub-01_ses-test_T1w.nii.gz&size=8677710
+  datalad-archives: dl+archive:MD5E-s4930156456--bf97c46872ce26f7e3f1e6c0a91bf252.tgz/ds114/sub001/anatomy/highres001.nii.gz#size=8677710
+  datalad-archives: dl+archive:MD5E-s825921204--94a98b57af218562235581089cfefb9a.tar.gz#path=ds114_test1/sub-01/anat/sub-01_T1w.nii.gz&size=8677710
+ok
+```
+
+---
+
+## **git-annex**: Exercises
+
+- Try downloading (`get`ing) few other files and see if their content
+becomes available (e.g. you could run `nib-ls` command some `.nii.gz`
+file(s)).
+
+- Inspect availability using `git annex whereis`
+
+- Use `git annex drop` to "remove" the content of those files from
+  local drive
+
+- Inspect changes stored within `git-annex` branch (e.g., `git log -p
+  git-annex`) to see what effects those commands had
+
+--
+
+to discover that files under `derivatives/` only available from some
+locations annex has no access to
+
+---
+## **git-annex**: Adding more "data sources"
+
+`git-annex` branch contains information about its _special remotes_
+(such as `web`, `datalad-archives`, or [many possible
+others](http://git-annex.branchable.com/special_remotes/)) and all
+other remotes identified by their UUIDs.
+
+To get content for `derivatives/` we can either
+
+- enable `datalad-archives` special remote
+
+  ```shell
+  $> git annex enableremote datalad-archives
+  ```
+
+  which then, upon an attempt to get a file from it, would first download
+  entire tarball, extract it, and provide you with the requested file
+
+- or to avoid downloading entire tarball, we can add a pointer to
+  another git remote which we saw among `git annex whereis` output:
+  `yoh@falkor:/srv/datasets.datalad.org/www`. It is
+  http://datasets.datalad.org
+
+  ```shell
+  $> git remote add datasets.datalad.org http://datasets.datalad.org/workshops/nipype-2017/ds000114/.git
+  ```
+  when we will run next `git annex get` command, annex will discover
+  that remote's UUID.
+
+---
+## **git-annex**: **get**ing more data
+
+Having added that remote we now can fetch any particular files of
+interest, specifying to do so in e.g. 4 parallel streams
+
+N.B. do not try parallel download from `datalad-archives` for now --
+it wouldn't work
+
+  ```shell
+$> git annex get --from=datasets.datalad.org -J4 derivatives/freesurfer/sub-01
+get derivatives/freesurfer/sub-01/mri/brain.mgz (from datasets.datalad.org...) (checksum...) ok
+get derivatives/freesurfer/sub-01/mri/brain.finalsurfs.mgz (from datasets.datalad.org...) (checksum...) ok
+get derivatives/freesurfer/sub-01/mri/brainmask.auto.mgz (from datasets.datalad.org...) (checksum...) ok
+get derivatives/freesurfer/sub-01/mri/filled.mgz (from datasets.datalad.org...) (checksum...) ok
+...
+```
+
+`--from=datasets.datalad.org` in above command is not mandatory -- git
+annex will just then try any available source
+
+---
+## **git-annex**: Other most frequently used commands
+
+- [`git annex add [FILES]`](http://git-annex.branchable.com/git-annex-add/)
+
+  Add a new file to git-annex - actual file will get moved under
+  `.git/annex/objects` and replaced with a symlink to it, which will
+  be added to git
+
+- [`git annex addurl URL`](https://git-annex.branchable.com/git-annex-addurl)
+
+  Download file from the web, add it to annex, and register its
+  "availability" within `web` special remote
+
+- [`git annex copy [--to=REMOTE] [FILES]`](http://git-annex.branchable.com/git-annex-copy/)
+
+  If `get` is analog of `fetch/pull` in git, `copy` is analog of
+  `push` -- it copies data from current repository into another one you specify
+
+- [`git annex drop [FILES]`](http://git-annex.branchable.com/git-annex-drop/)
+
+  Removes local copy of the file(s), after initially checking that you still have a copy of
+  it somewhere else
+
+- [`git annex unlock [FILES]`](https://git-annex.branchable.com/git-annex-unlock/)
+
+  To modify a file kept under annex control, you need first to unlock
+  it using `unlock` command, do changes, and `git annex add`
+
+---
+## **git-annex**:  Other cool commands
+
+- [`git annex metadata`](https://git-annex.branchable.com/git-annex-metadata/)
+
+  sets or gets metadata of a file, so you could later operate on files
+  using metadata tags.  See
+  e.g. [how FreeSurfer developers use it to obtain desired subsets of data files (section 1.1. Get the Data Files)](http://freesurfer.net/fswiki/freesurfer_linux_developers_page)
+
+- [`git annex webapp`](https://git-annex.branchable.com/git-annex-webapp/)
+
+  **git annex assistant** front-end which allows to establish automated
+    monitoring and syncing across multiple git-annex repositories
+    (think a super-flexible private and secure DropBox).
+
+- `.gitattributes` file support to specify which files go under
+  **git** and which under **git-annex** control (look at
+  `ds000114/.gitattributes`)
+
+---
+## **git-annex**: Exercises
+
+Clone this dataset locally, and try getting more data from one clone
+to another using `get` and `copy` commands.
+
+### For the curious: **git-annex** key anatomy
 
 Each file is replaced with a symlink to its key.  Each key (in our
 example `MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz`) is
@@ -552,248 +731,158 @@ composed from multiple components separated with '-':
 
 ---
 
-For a first example we will use `reprozip` on running `bet` from the command line.
-```bash
-$ reprozip trace -d bet-trace bet sub-01_T1w.nii.gz brain
-```
---
-This creates a `config.yml` file in the directory `bet-trace`
-```bash
-$ more bet-trace/config.yml
-```
---
-We can take look at each section of this file.
-```bash
-$ cat bet-trace/config.yml | grep "^[^# -].*:"
-version: "0.8"
-runs: --> This is a list of reprozip runs
-inputs_outputs: --> These are the inputs and outputs of each run
-packages: --> These are packages from which files were used
-other_files: --> These are all files that were used during the process
-```
+## **git-annex**: principles recap
+
+
+`git annex add` moves files under `.git/annex/objects` and replaces
+them with symlinks which get added to git (thus somewhere within
+`.git/objects`)
+
+Every clone of a repository has unique `git-uuid` (so do not
+`cp`/`rsync` -- `git clone` them)
+
+**git-annex** maintains and merges information about content
+availability from remote locations within a `git-annex` branch.
+
+Otherwise `git-annex` repository is just a git repository: thus
+"github-compatible" (just keep data available from elsewhere)
+
+### Additional resources:
+
+- [Git annex walk-through](https://git-annex.branchable.com/walkthrough/)
+
+  Coverage of all basic features of annex
+
+- [Variety of tips and tricks](https://git-annex.branchable.com/tips/)
+
+- [Archive of the Internet Archive using git-annex](http://iabak.archiveteam.org/)
+
 ---
-## Take a closer look at each section: `runs`
 
-`runs` is a list collecting information about each run save to a trace directory.
+## **DataLad**
 
-```yaml
-runs:
-- architecture: x86_64
-  argv: [bet, sub-01_T1w.nii.gz, brain]
-  binary: /usr/lib/fsl/5.0/bet
-  distribution: [debian, stretch/sid]
-  environ: {
-    ACCEPT_INTEL_PYTHON_EULA: 'yes',
-    HOME: /root, HOSTNAME: 72bfac9cef1d, LANG: C.UTF-8, LC_ALL: C.UTF-8,
-    LD_LIBRARY_PATH: '/usr/lib/fsl/5.0:',
-    OMP_NUM_THREADS: '1', OS: Linux,
-    PATH: '/usr/local/miniconda/bin:/usr/lib/ruby/gems/2.3/bin:/bin::
-        /usr/lib/fsl/5.0:/usr/lib/afni/bin:/opt/freesurfer/bin:/opt/
-        freesurfer/fsfast/bin:/opt/freesurfer/tktools:/opt/freesurfer/
-        mni/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'}
-  exitcode: 0
-  gid: 0
-  hostname: 72bfac9cef1d
-  id: run0
-  system: [Linux, 4.9.12-moby]
-  uid: 0
-  workingdir: /src/workdir
+Let's just explore!
+
+One of the goals for DataLad is to provide a "data distribution",
+analogous and complementary to [conda](http://conda.pydata.org),
+[Debian](http://debian.org), etc.  One of the basic operations of any
+distribution is `search`:
+
+```shell
+jovyan@8ab73a30d4b0:~$ datalad search bug
+No DataLad dataset found at current location
+Would you like to install the DataLad superdataset at '/home/jovyan/datalad'? (choices: yes, no): yes
+
+[INFO   ] Installing dataset at /home/jovyan/datalad from http://datasets.datalad.org/
+From now on you can refer to this dataset using the label '///'
+[INFO   ] Performing search using DataLad superdataset '/home/jovyan/datalad'
+[INFO   ] Loading and caching local meta-data... might take a few seconds
+Nothing to report
 ```
+
+Upon initial search, DataLad requested and installed our super-dataset
+from http://datasets.datalad.org and performed search within contained
+meta-information, but (un)fortunately not a single `bug` was found in it.
+
 ---
-## Take a closer look at each section: `inputs_outputs`
+## **datalad**: `search` & `install`
 
-A description from `reprozip`
-```text
-# Input and output files
+But we will be more successful to search for nipype:
 
-# Inputs are files that are only read by a run; reprounzip can replace these
-# files on demand to run the experiment with custom data.
-# Outputs are files that are generated by a run; reprounzip can extract these
-# files from the experiment on demand, for the user to examine.
-# The name field is the identifier the user will use to access these files.
+```shell
+jovyan@8ab73a30d4b0:~$ datalad search -d /// nipype
+datalad/workshops/nipype-2017
 ```
---
-The output from the run.
-```yaml
-inputs_outputs:
-- name: arg
-  path: /src/workdir/sub-01_T1w.nii.gz
-  written_by_runs: []
-  read_by_runs: [0] ---> This is an input
-- name: brain.nii.gz
-  path: /src/workdir/brain.nii.gz
-  written_by_runs: [0]  ----> This is an output
-  read_by_runs: []
-```
----
-## Take a closer look at each section: `packages`
 
-A description from `reprozip`
-```text
-# These files come from packages; we can thus choose not to include them, as it
-# will simply be possible to install that package on the destination system
-# They are included anyway by default
-```
---
-```yaml
-packages:
-    - name: "coreutils"
-      version: "8.25-2ubuntu2"
-      size: 6414336
-      packfiles: true
-      files:
-        # Total files used: 58.86 KB
-        # Installed package size: 6.12 MB
-        - "/bin/rm" # 58.86 KB
-    - name: "dash"
-      version: "0.5.8-2.1ubuntu2"
-      size: 247808
-      packfiles: true
-      files:
-        # Total files used: 150.46 KB
-        # Installed package size: 242.00 KB
-        - "/bin/dash" # 150.46 KB
-        - "/bin/sh" # Link to /bin/dash
+Above with `-d ///` we just instructed to search under our
+super-dataset, but you could simply `cd ~/datalad` and perform the
+search within without explicitly specifying on which dataset to
+operate.
+
+Having found datasets we are interested in, we can easily install them
+all!
+
+```shell
+cd ~/datalad
+datalad search nipype | xargs datalad install -r
+[INFO] Installing subdataset <Dataset path=/home/jovyan/datalad/workshops> in order to get /home/jovyan/datalad/workshops/nipype-2017
+[INFO] Installing subdataset <Dataset path=/home/jovyan/datalad/workshops/nipype-2017>
+[INFO] Obtaining <Dataset path=/home/jovyan/datalad/workshops/nipype-2017> underneath . recursively
+[INFO] Installing subdataset /home/jovyan/datalad/workshops/nipype-2017/ds000114
 ...
 ```
+
 ---
-## Take a closer look at each section: `packages`
 
-```yaml
-...
-  - name: "fsl-5.0-core"
-    version: "5.0.9-3~nd16.04+1"
-    size: 39678976
-    packfiles: true
-    files:
-      # Total files used: 2.33 MB
-      # Installed package size: 37.84 MB
-      - "/usr/lib/fsl/5.0" # Directory
-      - "/usr/lib/fsl/5.0/bet" # 13.41 KB
-      - "/usr/lib/fsl/5.0/bet2" # 71.14 KB
-      - "/usr/lib/fsl/5.0/imtest" # 4.29 KB
-      - "/usr/lib/fsl/5.0/libfslio.so" # 50.25 KB
-      - "/usr/lib/fsl/5.0/libmeshclass.so" # 94.34 KB
-      - "/usr/lib/fsl/5.0/libmiscmaths.so" # 571.57 KB
-      - "/usr/lib/fsl/5.0/libnewimage.so" # 1.46 MB
-      - "/usr/lib/fsl/5.0/libprob.so" # 31.66 KB
-      - "/usr/lib/fsl/5.0/libutils.so" # 50.45 KB
-      - "/usr/lib/fsl/5.0/remove_ext" # 4.06 KB
-      - "/usr/share/fsl/5.0/bin" # Link to /usr/lib/fsl/5.0
-...
-```
+## **datalad**: Exercises
+
+- Use `-r` and `-R` options to augment reported results
+- Perform more search queries (sample query ideas: `bids`,
+  `connectome`, `haxby`)
+- Install datasets of interest
+- You can use `datalad ls -r .` to get quick update on what you have
+  got so far
+
+???
+
+TODO: need install with -g and/or get -J demos
+
 ---
-## Take a closer look at each section: `other_files`
+## **datalad**: principles
 
-A description from `reprozip`
-```text
-# These files do not appear to come with an installed package -- you probably
-# want them packed
-```
-Additional files needed for the run
-```yaml
-other_files:
-  - "/etc/ld.so.cache" # 31.01 KB
-  - "/lib64/ld-linux-x86-64.so.2" # Link to /lib/x86_64-linux-gnu/ld-2.23.so
-  - "/src/workdir" # Directory
-  - "/src/workdir/sub-01_T1w.nii.gz" # 13.07 MB
-```
+- [DataLad datasets](http://docs.datalad.org/en/latest/glossary.html#term-dataset)
+  are **git** or **git-annex** repositories
+  - They can be collated into larger super-datasets using git submodules
+	mechanism
+  - DataLad helps to install, record change, and "publish" such
+    (super-)datasets
+
+- DataLad provides two custom special remotes for **git-annex**:
+  - `datalad` for a simple unified authentication interface where
+	needed (e.g., for pure S3://, http://crcns.org, etc)
+  - `datalad-archives` to obtain  content available within archives (zip/tar-balls)
+
+- Datasets can (optionally) carry
+  [meta data](http://docs.datalad.org/en/latest/metadata.html)
+  - meta data could be automatically parsed from supported formats
+  such as BIDS, frictionless packages, etc.
+  - [datalad aggregate-metadata](http://docs.datalad.org/en/latest/generated/man/datalad-aggregate-metadata.html)
+    pulls meta data from sub-packages into super-packages making it
+    available for `search` without installing sub-datasets
+
+- [`datalad crawl`](http://docs.datalad.org/en/latest/generated/man/datalad-crawl.html)
+  is used to automatically initiate and later update datasets from
+  content available online
+
+- DataLad provides both
+  [command line](http://docs.datalad.org/en/latest/cmdline.html) and
+  [Python](http://docs.datalad.org/en/latest/modref.html) interfaces
+  from the same specification
+
+- `python -m datalad` (or
+  [`datalad.auto.AutomagicIO` context manager](http://docs.datalad.org/en/latest/generated/datalad.auto.html)
+  could be used to automagically `git-annex get` to be `open()`'ed
+  by a Python script files
+
 ---
-## Packing this analysis
+## **datalad**: More examples
 
-First, we can pack this analysis into a reprozip pack file.
-```bash
-$ reprozip pack -d bet-trace better.rpz
-$ ls -alh better.rpz
--rw-r--r-- 1 root root 17M Mar 22 18:06 better.rpz
-```
-This file now contains all the data and code to reproduce the analysis.
+- [A typical data management workflow](http://docs.datalad.org/en/latest/generated/examples/3rdparty_analysis_workflow.html)
 
---
+  Collaboration workflow between Bob and Alice
 
-Let's quit docker, and get a container with no FSL, no Neurodebian.
-```bash
-$ docker pull continuumio/miniconda
-$ docker run -it --rm -v $PWD:/src continuumio/miniconda bash
-```
----
-## Replaying the analyis
+- [Creating a “new” derived dataset for Nipype workshop](http://docs.datalad.org/en/latest/generated/examples/nipype_workshop_dataset.html)
 
-Now we need the counterpart of `reprozip` a.k.a .red[`reprounzip`].
+  How `///workshops/nipype-2017/ds000114` was created
 
-```bash
-$ pip install reprounzip
-$ reprounzip
-...
-subcommands:
-
-    usage_report
-                 Enables or disables anonymous usage reports
-    chroot       Unpacks the files and run with chroot
-    directory    Unpacks the files in a directory and runs with PATH and
-                 LD_LIBRARY_PATH
-    graph        Generates a provenance graph from the trace data
-    info         Prints out some information about a pack
-    installpkgs  Installs the required packages on this system
-    showfiles    Prints out input and output file names
-```
----
-## Replaying this analysis
-
-We will use the `chroot` form of replaying the analysis, allowing isolation.
-```bash
-$ reprounzip chroot -h
-usage: reprounzip chroot [-h] [--version]
-
-Unpacks the files and run with chroot
-
-    setup/create    creates the directory (needs the pack filename)
-    setup/mount     mounts --bind /dev and /proc inside the chroot
-                    (do NOT rm -Rf the directory after that!)
-    upload          replaces input files in the directory
-                    (without arguments, lists input files)
-    run             runs the experiment
-    download        gets output files
-                    (without arguments, lists output files)
-    destroy/unmount unmounts /dev and /proc from the directory
-    destroy/dir     removes the unpacked directory
-```
---
-So let's unpack the reprozip file into a directory called `better`.
-```bash
-$ reprounzip chroot setup --dont-bind-magic-dirs better.rpz better
-```
----
-## Replaying this analysis
-
-Let's look at what the setup unpacked
-```bash
-$ ls better
-config.yml  inputs.tar.gz  root
-$ ls better/root
-bin  etc  lib  lib64  src  usr
-$ ls better/root/src/workdir/
-sub-01_T1w.nii.gz
-```
-
---
-Now rerun the analysis
-```bash
-$ reprounzip chroot run better
-
-*** Command finished, status: 0
-
-$ ls better/root/src/workdir/
-brain.nii.gz  sub-01_T1w.nii.gz
-```
 ---
 ## Review questions
 
-1. XXX
+1. What features make **git** so popular VCS?
 
-2. When do you want to use `git-annex`?
+2. When do you want to use **git-annex**?
 
-3. When do you want to use `datalad`?
+3. When do you want to use **datalad**?
 
 ---
 class: middle center
@@ -876,12 +965,6 @@ Let's rehearse
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"
 			type="text/javascript">
     </script>
-	<script
-    remark.macros.scale = function (percentage) {
-     var url = this;
-     return '<img src="' + url + '" style="width: ' + percentage + '" />';
-    };
-   </script>
 	<script>
     document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
 	</script>
