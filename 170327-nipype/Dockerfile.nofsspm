@@ -1,9 +1,9 @@
 FROM nipype/workshops:latest-base
 MAINTAINER Satrajit Ghosh <satra@mit.edu>
 
-#-----------------------------------------------
-# Install packages that require root: octave FSL
-#-----------------------------------------------
+#-----------------------------------
+# Install octave FSL from repository
+#-----------------------------------
 USER root
 RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
         octave \
@@ -21,14 +21,15 @@ ENV FSLDIR=/usr/share/fsl/5.0 \
     FSLWISH=/usr/bin/wish \
     PATH=/usr/lib/fsl/5.0:$PATH
 
-#------------------------------------------
-# Install packages that can be done as user
-#------------------------------------------
-USER $NB_USER
-
 #-----------------
 # Install dcm2niix
 #-----------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+       build-essential && \
+   apt-get clean && \
+   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+USER $NB_USER
 WORKDIR /tmp
 RUN git clone https://github.com/neurolabusc/dcm2niix.git && \
     cd dcm2niix/console/ && \
