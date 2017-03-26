@@ -6,14 +6,13 @@ class: center, middle, inverse
 
 ---
 layout: false
-<span style="color:purple">## Outline</span>
+##<span style="color:purple">Outline</span>
 
 - ### Learning objectives
 - ### Requirements
 - ### Introduction
-- ### Tools
 - ### Exercises
-- ### Review questions
+- ### Testing tools
 
 ---
 name: inverse
@@ -24,11 +23,13 @@ class: center, middle, inverse
 ---
 layout: false
 
-- What are the various types of tests people are using
-
 - Why do we write tests
 
-- What are the Python framework for testing
+- What are the various types of software tests
+
+- How to write simple unit and regression tests
+
+- What are the testing frameworks in Python
 
 ---
 name: inverse
@@ -39,9 +40,17 @@ class: center, middle, inverse
 ---
 layout: false
 
-- Python (basics of NumPy, Jupyter)
+- Your computer:
 
-- Nipype Function Interfaces
+  - Docker + Docker image - nipype/workshops:latest-base
+   or
+  - Python + Pytest
+
+- You:
+
+  - Python (basics of NumPy, Jupyter)
+
+
 
 ---
 name: inverse
@@ -54,36 +63,77 @@ layout: false
 
 ### <span style="color:purple"> Why do we test software?</span>
 
+--
+
+- #### mistakes happen and always will
+
+---
+### <span style="color:purple"> Why do we test software?</span>
+
+
+<img src="img/guardian.png" width="80%" />
+
+--
+
+<img src="img/twits.png" width="70%" />
+
+
+---
+### <span style="color:purple"> Why do we test software?</span>
+
+
+<img src="img/amazon_washpost.png" width="80%" />
+
+--
+
+- It started harmlessly:
+
+  - *A team member was doing a bit of maintenance on Amazon Web Services Tuesday...*
+
+--
+
+  - *With a few mistaken keystrokes, ...*
+
+--
+
+  - *... The cascading failure meant that many websites could no longer make changes to the information stored on Amazon's cloud platform....*
+
+--
+- Amazon said: *We have modified this tool to remove capacity more slowly and **added safeguards to prevent** capacity from being removed when it will take any subsystem below its minimum required capacity level.*
+
+--
+
+**Including tests is one of the possible safeguards when writing software!**
+
+---
+### <span style="color:purple"> Why do we test software?</span>
+
+#### And now a scientist's nightmare...
+
+--
+
+- A Prof. Geoffrey Chang story who had to retract 5 articles (3 from *Science*, *PNAS*, *J.Mol.Biol.*)
+
 &nbsp;
 
---
-
-- mistakes happens and always will
-
---
-
-  - guard against them
-  - raise your confidence during development
+<img src="img/retraction_letter.png" width="65%" />
 
 &nbsp;
 
---
+- *An in-house data reduction program introduced a change in sign...*
+
+---
+### <span style="color:purple"> Why do we test software?</span>
+
 
 - makes you think about desirable output
 
---
-
-  - helps you to write a better code
+- improves readability of your code
 
 &nbsp;
 
---
+[Excamples from Nipype code](https://github.com/nipy/nipype/blob/master/nipype/pipeline/engine/tests/test_engine.py#L45)
 
-- improves readability of your code
-
---
-
-  - helps to reuse your code
 
 ---
 ###<span style="color:purple">Various types of tests</span>
@@ -92,15 +142,15 @@ layout: false
 
 - Unit tests
 
-  - test isolated parts of the program
+  - work on isolated parts (units) of the program
+  - verify that units operate correctly in various scenarios
+  - usually compare observed results to well known expected results
 
-&nbsp;
-
---
 
 - Integration tests
 
   - combine individual software modules and test as a group
+  - similar structure as unit tests: compare observed results to  expected results, but the expected result can be more complicated to represent
 
 &nbsp;
 
@@ -112,84 +162,24 @@ layout: false
 
   - you don't have to knows the expected result, the assumption is that the past results were correct.
 
---
-
-- and many others...
-
-We will concentrate on unit and regression tests
-
 ---
-name: inverse
-layout: true
-class: center, middle, inverse
----
-## Tools
----
-layout: false
 
-### <span style="color:purple">Unit tests with simple assert statement</span>
+### <span style="color:purple">Science and software testing</span>
 
-```python
-def mean_diameter(radius):
-    diameter = 2 * radius
-    return sum(diameter) / len(diameter)```
+- We all question/test many things in our scientific work
+
+- When writing a program we often execute a simple example first and check the output
+
+&nbsp;
 
 --
 
-```python
-assert mean_diameter([3, 4, 5]) == 8
-```
+- Writing software tests for your scientific code is:
 
---
+  - translating your ideas for verification to programming code
 
-- no meaningful output
+  - automating the process of verification, so you can do it on a regular basis
 
-- no automation
----
-### <span style="color:purple">Unit tests with Unittest built-in library</span>
-
-```python
-def mean_diameter(radius):
-    diameter = 2 * radius
-    return sum(diameter) / len(diameter)
-
-import unittest
-
-class TestDiv(unittest.TestCase):
-    def test_div5(self):
-        self.assertEqual(mean_diameter([3, 4, 5]), 8)
-
-if __name__ == ’__main__’:
-    unittest.main()
-```
-
---
-
-- supports test automation
-
-- but a lot of boilerplate code
-
----
-### <span style="color:purple">Unit tests with Pytest library</span>
-
-```python
-def mean_diameter(radius):
-    diameter = 2 * radius
-    return sum(diameter) / len(diameter)
-
-def test_with_pytest():
-    assert mean_diameter([3, 4, 5]) == 8
-```
-
---
-
-- it’s easy to get started
-
-- straightforward asserting with the assert statement
-
-- helpful traceback and failing assertion reporting
-
-- automatic test discovery
 ---
 
 name: inverse
@@ -199,16 +189,158 @@ class: center, middle, inverse
 ## Exercises
 ---
 layout: false
-TODO
 
-- output of a function
-- type of an object
-- parametrization of arguments
-- fixtures to create data
-- skipping test: skipif
-- expecting tests to fail: xfail
-- testing exceptions: pytest.raises
--
+### <span style="color:purple">Assert statement</span>
+
+&nbsp;
+
+```bash
+assert Expression[, Arguments]
+```
+- Python evaluates the Expression to either True or False
+
+- if the Expression is false, `assert` returns an `AssertionError`
+
+---
+### <span style="color:purple">Assert statement</span>
+
+- Examples:
+  ```python
+  assert True
+  ```
+  ```python
+  assert False
+  ```
+  ```python
+  assert 1 + 2 == 3
+  ```
+  ```python
+  assert 2**0.5 < 1.5
+  ```
+  ```python
+  assert 2 != 3
+  ```
+  ```python
+  import math
+  assert math.pi == 3.14
+  ```
+
+  ```python
+  assert type(2) is int
+  ```
+  ```python
+  assert 2 in [1,2,3]
+  ```
+  ```python
+  assert 2 not in [1,2,3]
+  ```
+
+---
+### <span style="color:purple">Finding area of a sector of a circle </span>
+
+&nbsp;
+
+<img src="img/sector.png" width="50%" />
+
+---
+### <span style="color:purple">Finding the positions of local maxima in a list of numbers  </span>
+
+Check the output of your function for these examples:
+
+- list: `[1, 2, 1, 0]`, expected output: `[1]`
+
+- list: `[-1, 2, 1, 3, 2]`, expected output: `[1, 3]`
+
+- list: `[4, 3, 4, 3]`, expected output: `[0, 2]`
+
+---
+### <span style="color:purple">Finding the mean absolute value of the list of pseudo-random numbers </span>
+
+- `random` library: pseudo-random number generator, e.g.
+  ```python
+  random.sample(range(-100, 100), 10)
+  ```
+
+--
+
+- you don't know what is the expected value of the "experiment", but you can set a seed (`random.seed(3)`) and save the output
+
+  - the saved value can be used in a simple regression test as the expected value
+
+---
+name: inverse
+layout: true
+class: center, middle, inverse
+---
+## Testing tools
+---
+layout: false
+
+### <span style="color:purple">Python testing frameworks</span>
+
+- unittest
+
+- nosetests
+
+- pytest
+
+
+&nbsp;
+
+--
+
+Which framework should you use?
+
+- A great comparison of the frameworks you can find [here](http://pythontesting.net/start-here/)
+
+- A short answer: **use pytest if you can**
+
+
+---
+### <span style="color:purple">Unit tests with Pytest library</span>
+
+
+- it’s easy to get started
+
+- straightforward asserting with the assert statement
+
+  ```python
+  def test_angle0():
+      assert sector_area(5, 0) == 0
+   ```
+
+- helpful traceback and failing assertion reporting
+
+- automatic test discovery
+
+  ```bash
+  # discovers all tests in all subdirectories
+  pytest
+  # runs all test from test_random.py file only
+  pytest tests_random.py
+  # runs one specific test
+  pytest tests_random.py::test_1
+  ```
+
+- many useful features including fixtures, test parametrization, etc.
+
+---
+### <span style="color:purple">Continuous Integration</span>
+
+- Integrating the test suite into the development process
+
+  - Building and checking the code every time the repository changes
+  - Using various environments for testing the code
+
+
+  &nbsp;
+
+- Continuous Integration Services
+
+  - Travis CI
+  - CircleCI
+
+Example of travis file from Nipype project is [here](https://github.com/nipy/nipype/blob/master/.travis.yml).
 
 
 ---
