@@ -1,0 +1,132 @@
+FROM nipype/workshops:latest-base
+MAINTAINER Satrajit Ghosh <satra@mit.edu>
+
+#-----------------------------------
+# Install octave FSL from repository
+#-----------------------------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+        octave \
+        fsl-core fsl-mni152-templates fsl-atlases fsl-5.0-eddy-nonfree && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    ln -s /usr/bin/octave /usr/bin/matlab && \
+    chown $NB_USER /opt
+ENV FSLDIR=/usr/share/fsl/5.0 \
+    FSLOUTPUTTYPE=NIFTI_GZ \
+    FSLMULTIFILEQUIT=TRUE \
+    POSSUMDIR=/usr/share/fsl/5.0 \
+    LD_LIBRARY_PATH=/usr/lib/fsl/5.0:$LD_LIBRARY_PATH \
+    FSLTCLSH=/usr/bin/tclsh \
+    FSLWISH=/usr/bin/wish \
+    PATH=/usr/lib/fsl/5.0:$PATH
+
+#-----------------
+# Install dcm2niix
+#-----------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+       build-essential && \
+   apt-get clean && \
+   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+USER $NB_USER
+WORKDIR /tmp
+RUN git clone https://github.com/neurolabusc/dcm2niix.git && \
+    cd dcm2niix/console/ && \
+    git checkout b3c146bc49e1bcb1bd91f786523b7bd5740787fc && \
+    g++ -O3 -I. main_console.cpp nii_dicom.cpp jpg_0XC3.cpp ujpeg.cpp \
+         nifti1_io_core.cpp nii_ortho.cpp nii_dicom_batch.cpp  \
+         -o dcm2niix -DmyDisableOpenJPEG -DmyDisableJasper && \
+    mkdir -p /opt/bin && cp dcm2niix /opt/bin/ && \
+    cd /tmp && rm -rf dcm2niix
+
+#-------------
+# Install ANTS
+#-------------
+# USER root
+# RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+#        build-essential && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# USER $NB_USER
+# WORKDIR /tmp
+# RUN git clone https://github.com/stnava/ANTs.git && \
+#    cd ANTs && \
+#    git checkout 767f756bc0e423cd503a24c806b6578aaeb5b82f && \
+#    mkdir build && cd build && cmake .. && make && \
+#    mkdir -p /opt/ants && \
+#    cp bin/* /opt/ants && cp ../Scripts/* /opt/ants && \
+#    cd /tmp && rm -rf ANTs
+RUN curl -sSL https://dl.dropbox.com/s/btep51gtglp7kwh/ants.tgz?dl=0 | tar zx -C /
+ENV ANTSPATH=/opt/ants/ \
+    PATH=/opt/ants:$PATH
+
+#------------
+# Install c3d
+#------------
+RUN mkdir -p /opt/c3d && \
+    curl -sSL "http://downloads.sourceforge.net/project/c3d/c3d/1.0.0/c3d-1.0.0-Linux-x86_64.tar.gz" \
+    | tar -xzC /opt/c3d --strip-components 1
+ENV C3DPATH=/opt/c3d \
+    PATH=/opt/c3d/bin:$PATH
+
+#-------------
+# Install afni
+#-------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+        libxp6 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+USER $NB_USER
+WORKDIR /opt
+RUN curl -sSLO https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz && \
+    tar zxf linux_openmp_64.tgz && rm linux_openmp_64.tgz && \
+    mv linux_openmp_64 afni
+ENV AFNI_MODELPATH=/opt/afni/ \
+    AFNI_IMSAVE_WARNINGS=NO \
+    AFNI_TTATLAS_DATASET=/opt/afni \
+    AFNI_PLUGINPATH=/opt/afni \
+    PATH=/opt/afni:$PATH
+
+#-------------------
+# Install mindboggle
+#-------------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+        build-essential libsm-dev libx11-dev libxt-dev libxext-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+USER $NB_USER
+RUN conda install --quiet --yes cmake && \
+    conda clean -tipsy
+WORKDIR /tmp
+RUN git clone https://github.com/nipy/mindboggle && \
+    cd mindboggle && git checkout cb37b8fa3b2bd1b272cb932e7f15c3ec110cb5d7 && \
+    python setup.py install && \
+    mkdir /opt/mindboggle && mkdir /opt/mindboggle/vtk_cpp_tools && \
+    cd /opt/mindboggle/vtk_cpp_tools && \
+    cmake /tmp/mindboggle/vtk_cpp_tools -DCMAKE_EXE_LINKER_FLAGS="-L /opt/conda/lib" && \
+    make && cd .. && rm -rf /tmp/mindboggle && \
+    curl -sSL https://osf.io/rh9km/?action=download\&version=2 -o templates.zip && \
+    unzip templates.zip && rm -rf templates.zip __MACOSX
+ENV vtk_cpp_tools=/opt/mindboggle/vtk_cpp_tools
+
+#-------------
+# Install PALM
+#-------------
+WORKDIR /opt
+RUN git clone https://github.com/andersonwinkler/PALM.git && \
+    chmod +x /opt/PALM/palm
+ENV PATH=/opt/PALM:$PATH
+
+#----------------------------------------
+# Clear apt cache and other empty folders
+#----------------------------------------
+USER root
+RUN apt-get clean && apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /boot /media /mnt /srv && \
+    chmod a+w /tmp
+
+WORKDIR /home/$NB_USER/work
+USER $NB_USER

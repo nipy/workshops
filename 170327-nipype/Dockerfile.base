@@ -1,0 +1,100 @@
+# This Dockerfile was based off: https://github.com/miykael/nipype_env/level0
+# Changes include working with Python 3 and updates to base package layer
+
+FROM jupyter/base-notebook
+MAINTAINER Satrajit Ghosh <satra@mit.edu>
+
+#---------------------------------------------
+# Update OS dependencies and setup neurodebian
+#---------------------------------------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends bzip2 \
+                                                ca-certificates \
+                                                curl \
+                                                tree \
+                                                unzip \
+                                                wget \
+                                                xvfb \
+                                                zip \
+                                                vim \
+                                                emacs-nox \
+                                                graphviz \
+                                                less && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ENV NEURODEBIAN_URL http://neuro.debian.net/lists/jessie.de-md.full
+RUN curl -sSL $NEURODEBIAN_URL | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list && \
+    ( apt-key adv --recv-keys --keyserver pgp.mit.edu 2649A5A9 || \
+    { wget -q -O- http://neuro.debian.net/_static/neuro.debian.net.asc | apt-key add -; } ) && \
+    apt-get update -qq && apt-get install -yq --no-install-recommends \
+                                                git-annex-standalone && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+#-------------------------------------------------
+# Update and install conda dependencies for nipype
+#-------------------------------------------------
+USER $NB_USER
+
+# Make sure that necessary packages are installed
+RUN conda install --quiet --yes -c clinicalgraphics vtk=7.1.0 && \
+    conda install --quiet --yes nomkl \
+                                matplotlib \
+                                pandas \
+                                pip \
+                                scikit-image \
+                                seaborn \
+                                cython \
+                                dipy \
+                                nilearn \
+                                reprozip \
+                                reprounzip \
+                                prov \
+                                pycrypto \
+                                cryptography \
+                                boto \
+                                pytest \
+                                pythreejs \
+                                bqplot \
+                                mayavi \
+                                docutils \
+                                xvfbwrapper && \
+    conda update --quiet --yes icu && \
+    conda clean -tipsy && \
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
+    jupyter nbextension enable --py --sys-prefix pythreejs && \
+    jupyter nbextension enable --py --sys-prefix bqplot
+
+# Import matplotlib the first time to build the font cache.
+ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
+RUN MPLBACKEND=Agg $CONDA_DIR/bin/python -c "import matplotlib.pyplot"
+
+#-------------------------------------------------------------------
+# Update pip, nibabel (for Cifti) and nilearn (for surface plotting)
+#-------------------------------------------------------------------
+RUN pip install --upgrade --quiet pip && \
+    pip install --upgrade --quiet nipy && \
+    pip install --upgrade --quiet pydicom && \
+    pip install --quiet datalad pybids==0.1 && \
+    pip install --upgrade --quiet matplotlib --upgrade-strategy only-if-needed && \
+    pip install --quiet https://github.com/nipy/nibabel/archive/ca977abeb77f95ed3a40b7b89c310b286b9885b7.zip \
+             https://github.com/nilearn/nilearn/archive/87c12efe14c005f1c916f76358639b55a306fb06.zip && \
+    rm -rf ~/.cache/pip
+
+#---------------------------------------------
+# Install newest version of nipype from Github
+#---------------------------------------------
+RUN pip install --quiet https://github.com/nipy/nipype/archive/master.zip && \
+    rm -rf ~/.cache/pip
+
+#----------------------------------------
+# Clear apt cache and other empty folders
+#----------------------------------------
+USER root
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /boot /media /mnt /srv && \
+    chmod a+w /tmp && ln -s /home/$NB_USER/work/data /data
+
+USER $NB_USER

@@ -1,0 +1,198 @@
+FROM nipype/workshops:latest-base
+MAINTAINER Satrajit Ghosh <satra@mit.edu>
+
+#-----------------------------------
+# Install octave FSL from repository
+#-----------------------------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+        octave \
+        fsl-core fsl-mni152-templates fsl-atlases fsl-5.0-eddy-nonfree && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    ln -s /usr/bin/octave /usr/bin/matlab && \
+    chown $NB_USER /opt
+ENV FSLDIR=/usr/share/fsl/5.0 \
+    FSLOUTPUTTYPE=NIFTI_GZ \
+    FSLMULTIFILEQUIT=TRUE \
+    POSSUMDIR=/usr/share/fsl/5.0 \
+    LD_LIBRARY_PATH=/usr/lib/fsl/5.0:$LD_LIBRARY_PATH \
+    FSLTCLSH=/usr/bin/tclsh \
+    FSLWISH=/usr/bin/wish \
+    PATH=/usr/lib/fsl/5.0:$PATH
+
+#-----------------
+# Install dcm2niix
+#-----------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+       build-essential && \
+   apt-get clean && \
+   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+USER $NB_USER
+WORKDIR /tmp
+RUN git clone https://github.com/neurolabusc/dcm2niix.git && \
+    cd dcm2niix/console/ && \
+    git checkout b3c146bc49e1bcb1bd91f786523b7bd5740787fc && \
+    g++ -O3 -I. main_console.cpp nii_dicom.cpp jpg_0XC3.cpp ujpeg.cpp \
+         nifti1_io_core.cpp nii_ortho.cpp nii_dicom_batch.cpp  \
+         -o dcm2niix -DmyDisableOpenJPEG -DmyDisableJasper && \
+    mkdir -p /opt/bin && cp dcm2niix /opt/bin/ && \
+    cd /tmp && rm -rf dcm2niix
+
+#-------------
+# Install ANTS
+#-------------
+# USER root
+# RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+#        build-essential && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# USER $NB_USER
+# WORKDIR /tmp
+# RUN git clone https://github.com/stnava/ANTs.git && \
+#    cd ANTs && \
+#    git checkout 767f756bc0e423cd503a24c806b6578aaeb5b82f && \
+#    mkdir build && cd build && cmake .. && make && \
+#    mkdir -p /opt/ants && \
+#    cp bin/* /opt/ants && cp ../Scripts/* /opt/ants && \
+#    cd /tmp && rm -rf ANTs
+RUN curl -sSL https://dl.dropbox.com/s/btep51gtglp7kwh/ants.tgz?dl=0 | tar zx -C /
+ENV ANTSPATH=/opt/ants/ \
+    PATH=/opt/ants:$PATH
+
+#------------
+# Install c3d
+#------------
+RUN mkdir -p /opt/c3d && \
+    curl -sSL "http://downloads.sourceforge.net/project/c3d/c3d/1.0.0/c3d-1.0.0-Linux-x86_64.tar.gz" \
+    | tar -xzC /opt/c3d --strip-components 1
+ENV C3DPATH=/opt/c3d \
+    PATH=/opt/c3d/bin:$PATH
+
+#-------------------
+# Install FreeSurfer
+#-------------------
+RUN curl -sSL https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/6.0.0/freesurfer-Linux-centos6_x86_64-stable-pub-v6.0.0.tar.gz | tar zx -C /opt \
+    --exclude='freesurfer/trctrain' \
+    --exclude='freesurfer/subjects/fsaverage_sym' \
+    --exclude='freesurfer/subjects/fsaverage3' \
+    --exclude='freesurfer/subjects/fsaverage4' \
+    --exclude='freesurfer/subjects/fsaverage5' \
+    --exclude='freesurfer/subjects/fsaverage6' \
+    --exclude='freesurfer/subjects/cvs_avg35' \
+    --exclude='freesurfer/subjects/cvs_avg35_inMNI152' \
+    --exclude='freesurfer/subjects/bert' \
+    --exclude='freesurfer/subjects/V1_average' \
+    --exclude='freesurfer/average/mult-comp-cor' \
+    --exclude='freesurfer/lib/cuda' \
+    --exclude='freesurfer/lib/qt' && \
+    ( echo "cHJpbnRmICJrcnp5c3p0b2YuZ29yZ29sZXdza2lAZ21haWwuY29tXG41MTcyXG4gKkN2dW12RVYzelRmZ1xuRlM1Si8yYzFhZ2c0RVxuIiA+IC9vcHQvZnJlZXN1cmZlci9saWNlbnNlLnR4dAo=" | base64 -d | sh )
+ENV FSL_DIR=/usr/share/fsl/5.0 \
+    OS=Linux \
+    FS_OVERRIDE=0 \
+    FIX_VERTEX_AREA= \
+    FSF_OUTPUT_FORMAT=nii.gz \
+    FREESURFER_HOME=/opt/freesurfer
+ENV SUBJECTS_DIR=$FREESURFER_HOME/subjects \
+    FUNCTIONALS_DIR=$FREESURFER_HOME/sessions \
+    MNI_DIR=$FREESURFER_HOME/mni \
+    LOCAL_DIR=$FREESURFER_HOME/local \
+    FSFAST_HOME=$FREESURFER_HOME/fsfast \
+    MINC_BIN_DIR=$FREESURFER_HOME/mni/bin \
+    MINC_LIB_DIR=$FREESURFER_HOME/mni/lib \
+    MNI_DATAPATH=$FREESURFER_HOME/mni/data \
+    FMRI_ANALYSIS_DIR=$FREESURFER_HOME/fsfast
+ENV PERL5LIB=$MINC_LIB_DIR/perl5/5.8.5 \
+    MNI_PERL5LIB=$MINC_LIB_DIR/perl5/5.8.5 \
+    PATH=$FREESURFER_HOME/bin:$FSFAST_HOME/bin:$FREESURFER_HOME/tktools:$MINC_BIN_DIR:$PATH
+
+#-------------------
+# Install Matlab MCR
+#-------------------
+USER root
+WORKDIR /opt
+RUN echo "destinationFolder=/opt/mcr" > mcr_options.txt && \
+    echo "agreeToLicense=yes" >> mcr_options.txt && \
+    echo "outputFile=/tmp/matlabinstall_log" >> mcr_options.txt && \
+    echo "mode=silent" >> mcr_options.txt && \
+    mkdir -p matlab_installer && \
+    curl -sSL https://www.mathworks.com/supportfiles/downloads/R2017a/deployment_files/R2017a/installers/glnxa64/MCR_R2017a_glnxa64_installer.zip \
+         -o matlab_installer/installer.zip && \
+    unzip matlab_installer/installer.zip -d matlab_installer/ && \
+    matlab_installer/install -inputFile /opt/mcr_options.txt && \
+    rm -rf matlab_installer mcr_options.txt
+
+#------------
+# Install SPM
+#------------
+user $NB_USER
+RUN curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_latest_Linux_R2017a.zip -o spm12.zip && \
+    unzip spm12.zip && \
+    rm -rf spm12.zip
+
+ENV MATLABCMD="/opt/mcr/v92/toolbox/matlab" \
+    SPMMCRCMD="/opt/spm12/run_spm12.sh /opt/mcr/v92/ script" \
+    FORCE_SPMMCR=1 \
+    LD_LIBRARY_PATH=/opt/mcr/v92/runtime/glnxa64:/opt/mcr/v92/bin/glnxa64:/opt/mcr/v92/sys/os/glnxa64:$LD_LIBRARY_PATH
+
+#-------------
+# Install afni
+#-------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+        libxp6 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+USER $NB_USER
+WORKDIR /opt
+RUN curl -sSLO https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz && \
+    tar zxf linux_openmp_64.tgz && rm linux_openmp_64.tgz && \
+    mv linux_openmp_64 afni
+ENV AFNI_MODELPATH=/opt/afni/ \
+    AFNI_IMSAVE_WARNINGS=NO \
+    AFNI_TTATLAS_DATASET=/opt/afni \
+    AFNI_PLUGINPATH=/opt/afni \
+    PATH=/opt/afni:$PATH
+
+#-------------------
+# Install mindboggle
+#-------------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+        build-essential libsm-dev libx11-dev libxt-dev libxext-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+USER $NB_USER
+RUN conda install --quiet --yes cmake && \
+    conda clean -tipsy
+WORKDIR /tmp
+RUN git clone https://github.com/nipy/mindboggle && \
+    cd mindboggle && git checkout cb37b8fa3b2bd1b272cb932e7f15c3ec110cb5d7 && \
+    python setup.py install && \
+    mkdir /opt/mindboggle && mkdir /opt/mindboggle/vtk_cpp_tools && \
+    cd /opt/mindboggle/vtk_cpp_tools && \
+    cmake /tmp/mindboggle/vtk_cpp_tools -DCMAKE_EXE_LINKER_FLAGS="-L /opt/conda/lib" && \
+    make && cd .. && rm -rf /tmp/mindboggle && \
+    curl -sSL https://osf.io/rh9km/?action=download\&version=2 -o templates.zip && \
+    unzip templates.zip && rm -rf templates.zip __MACOSX
+ENV vtk_cpp_tools=/opt/mindboggle/vtk_cpp_tools
+
+#-------------
+# Install PALM
+#-------------
+WORKDIR /opt
+RUN git clone https://github.com/andersonwinkler/PALM.git && \
+    chmod +x /opt/PALM/palm
+ENV PATH=/opt/PALM:$PATH
+
+#----------------------------------------
+# Clear apt cache and other empty folders
+#----------------------------------------
+USER root
+RUN apt-get clean && apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /boot /media /mnt /srv && \
+    chmod a+w /tmp
+
+WORKDIR /home/$NB_USER/work
+USER $NB_USER
