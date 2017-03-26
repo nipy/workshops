@@ -1,3 +1,4 @@
 .ipynb_checkpoints/
-
+data/
 working_dir/
+run_docker.sh
