@@ -200,7 +200,7 @@ layout: false
 ## Learning objectives
 ]
 .right-column[
-- Why to use version control systems (VCS)
+- Warm-up with a typical git/github workflow
 
 - How git "works"
   - what is inside `.git/` black box
@@ -231,8 +231,8 @@ layout: false
    - because we do it already but it hurts <img src="pics/phd052810s.png" style="width: 80%" />
    - because it makes it easy to collaborate
    - because it is a great 'backup'
-   - ...
-   - from future "repeatable-research" (still apply)
+   - ... <**Q**: name your reasons> ...
+   - from future "repeatable-research" (still applies)
       - to document/disseminate what was done
       - to repeat an analysis
       - to compare across analyses
@@ -250,7 +250,7 @@ layout: false
     unusually rich command set that provides both high-level operations and
     full access to internals [`man git`]
 
-    the stupid content tracker. [`man git`]
+    the stupid content tracker [`man git`]
 
 	**why?** because Linus needed a FOSS VCS to develop Linux kernel
 
@@ -293,8 +293,8 @@ layout: false
    manipulate (obtain, create, update, publish, etc.) datasets and
    their collections. [`man datalad`]
 
-   **why?** because **git-annex** is great and we have lots of
-   data already -- we need a _unified distribution_ to index and access it all
+   **why?** because **git** and **git-annex** are great and we have lots of
+   data already -- we needed a _unified distribution_ to index and access it all
 
 ]
 
@@ -320,7 +320,7 @@ layout: false
   "pure-git" files
 
 - While using **git-annex** on Windows beware of the 260 characters
-  filename length (was addressed on some Windows 10)
+  filename length (was addressed on some Windows 10 release)
 
 - DataLad does not "officially" support Windows at all at the moment
 ]
@@ -363,33 +363,41 @@ class: middle
 ## Let's get started
 
 ```bash
-  ???  should we use nipype/workshops:latest-base ???
-  docker run -it --rm --security-opt seccomp:unconfined -v bids-data:/data
-    -v $PWD:/src/workdir test36:trace bash
-
-  root@b6d7839a5760:/src/workdir#
+  docker run -it -u jovyan --name version-control \
+      nipype/workshops:latest-base /bin/bash
 ```
 
 ---
-## **git**: warm up round
+## **git**: Warm up round
 
 We will work with the  https://github.com/datalad/ds000114 repository.
-Let's establish rudimentary "contribute on GitHub" workflow
 
+Rudimentary "contribute on GitHub" workflow
+
+.left-column2[
 1. "Fork" it on github.com into your account
 
 2. Clone your fork to your local environment (it will become an 'origin')
 
 3. Add the _official_ original repository as "upstream" remote
 
-   - Q: how to make it in "read-only", i.e. so that even if you had
-     permissions on github for that repository, you could not push
-     back to the `origin`?
+   - Q: how to make 'upstream' "read-only"?
 
-4. "Contribute" by introducing some change to any of the files in
-   the top directory, committing, and submitting a pull request (PR)?
+4. Commit some changes
 
---
+5. Push and submit a PR
+]
+.right-column2[
+** Video tutorial (Opens in a new window) **
+
+<a href="https://asciinema.org/a/evuh6s5qpqu2f7z2arusi5u2g" target="\_blank"><img src="https://asciinema.org/a/evuh6s5qpqu2f7z2arusi5u2g.png" width="100%"/></a>
+
+]
+
+
+---
+
+## **git**: Workflow questions
 
 **Q:** did you create a new (feature) branch to submit your PR?
 
@@ -397,9 +405,9 @@ Let's establish rudimentary "contribute on GitHub" workflow
 
 **Q:** why generally you should submit PRs off a new (feature) branch?
 
-???
-TODO -- prepare asciinema
-TODO -- add a URL to detailed description/image of the workflow
+--
+
+**Q:** how to update your PR with more changes now?
 
 ---
 ## **git**: what is in the black box of `.git/`
@@ -418,7 +426,7 @@ investigate content of `objects/`, `refs/`, `HEAD` and `config`.
 
 ---
 
-## **git**: what is in the black box of `.git/`
+## **git**: What is in the black box of `.git/`
 
 .left-column2[
 **Qs:** what git contains ...
@@ -433,7 +441,7 @@ investigate content of `objects/`, `refs/`, `HEAD` and `config`.
 
 ---
 
-## **git** principles recap
+## **git**: Principles recap
 
 **git** maintains all content under `.git/objects`, and references
 'commits' containing trees of files using 'branches', and 'tags'.
@@ -594,6 +602,7 @@ ok
 
 ## **git-annex**: Exercises
 
+.left-column3[
 - Try downloading (`get`ing) few other files and see if their content
 becomes available (e.g. you could run `nib-ls` command some `.nii.gz`
 file(s)).
@@ -605,11 +614,14 @@ file(s)).
 
 - Inspect changes stored within `git-annex` branch (e.g., `git log -p
   git-annex`) to see what effects those commands had
-
---
+]
+.right-column3[
+** Video tutorial (Opens in a new window) **
+<a href="https://asciinema.org/a/91q1v55sgqjlrpmc2eyzq7xb9" target="\_blank"><img src="https://asciinema.org/a/91q1v55sgqjlrpmc2eyzq7xb9.png" width="100%"/></a>
+]
 
 to discover that files under `derivatives/` only available from some
-locations annex has no access to
+locations annex has no access to (yet)
 
 ---
 ## **git-annex**: Adding more "data sources"
@@ -816,16 +828,19 @@ datalad search nipype | xargs datalad install -r
 
 ## **datalad**: Exercises
 
+.left-column3[
 - Use `-r` and `-R` options to augment reported results
 - Perform more search queries (sample query ideas: `bids`,
   `connectome`, `haxby`)
 - Install datasets of interest
 - You can use `datalad ls -r .` to get quick update on what you have
   got so far
+]
+.right-column3[
+** Video tutorial (Opens in a new window) **
+<a href="https://asciinema.org/a/8r0y1s52gdyqj06hue0yz69g3" target="\_blank"><img src="https://asciinema.org/a/8r0y1s52gdyqj06hue0yz69g3.png" width="100%"/></a>
+]
 
-???
-
-TODO: need install with -g and/or get -J demos
 
 ---
 ## **datalad**: principles
