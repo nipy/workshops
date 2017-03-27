@@ -20,17 +20,21 @@ layout: false
 ## Objectives
 ]
 .right-column[
-- Empower you with tools and technologies to do reproducible research
+- Empower you with tools and technologies to do reproducible, scalable, and efficient research
 
 - Familiarize you with the Python ecosystem for scientific work
 
 - Learn from each other
 
-- Engage and gather feedback to direct future directions of Nipype
+- Improve Nipype and extend it to address different use-cases
 
 - Enable you to use the material to organize and teach local workshops
 
-- Be hands-on and learn to hack
+- Become hands-on
+
+- Learn to hack .red[\*]
+
+.footnote[ .red[\*] simply means to solve problems in clever ways]
 ]
 ---
 .left-column[
@@ -89,7 +93,7 @@ Unconference sessions Day 3 and 4:
 .right-column[
 - Able to get Docker up and running
 
-  - Able to download docker containers
+  - Able to `pull` docker containers
 
 - The sessions may take up to 20 - 25G of space
 
