@@ -2,3 +2,6 @@
 data/
 working_dir/
 run_docker.sh
+example_metaflow.ipynb
+basic_workflow.ipynb
+
