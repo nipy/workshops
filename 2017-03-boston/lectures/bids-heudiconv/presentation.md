@@ -7,19 +7,37 @@ class: center, middle, inverse
 
 ---
 name: content
+class: center, middle
 layout: false
-
 ## Roadmap
 
-.middle[
-.center[
 ### [Data and BIDS](#datamanage)
 ### [Heudiconv](#heudiconv)
 ### [Interactive Conversion](#conversion)
 ### [Extra pieces](#extrasteps)
 ### [BIDS-Apps](#nowwhat)
-]
-]
+
+---
+## Prerequisites
+
+* `docker pull nipype/workshops:latest-base`
+
+* `docker pull nipy/heudiconv`
+
+* `jupyter notebook` (for nice viewing)
+
+--
+
+* Grab the data (using datalad!)
+
+```bash
+$ docker run -it --rm -v $PWD:/data nipype/workshops:latest-base bash
+# Inside container
+> git clone http://datasets.datalad.org/test/dartmouth-siemens/PHANTOM1_3/.git
+> cd PHANTOM1_3
+> datalad get -J6 YAROSLAV_DBIC-TEST1/
+> exit
+```
 
 ---
 name: datamanage
@@ -76,16 +94,17 @@ name: heudiconv
     - `dcm2niix`
 
 ---
+class: center
+layout: true
+---
 name: conversion
 ### Sample conversion
 
-.middle[
 Start out running heudiconv without any converter, just passing in dicoms.
 
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv
 ```
-]
 
 ---
 ### Sample conversion
@@ -113,15 +132,14 @@ docker run --rm -it -v $PWD:/data nipy/heudiconv
 ]
 
 ---
+layout: false
 ### Sample conversion
 
-.middle[
 Once run, you should now have a directory with your subject, and a sub-directory `info`.
 
 - You can see a `dicominfo.txt` - we'll be using the information here to convert to a file structure (BIDS)
 
 - The full specifications for BIDS can be found [here](http://bids.neuroimaging.io/bids_spec1.0.1.pdf)
-]
 
 ---
 ### The heuristic file
@@ -204,7 +222,6 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 
   - And now for each key, we will look at the `dicominfo.txt` and set a unique criteria that only that scan will meet.
 
---
 
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
@@ -330,46 +347,38 @@ def infotodict(seqinfo):
 ---
 ### Changing our docker command
 
-.middle[
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv
 -d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
 -f /convertall.py -c none -o /data/output
 ```
-]
 
 ---
 ### Changing our docker command
 
-.middle[
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv
 -d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
 -f /data/phantom_heuristic.py -c none -o /data/output
 ```
-]
 
 ---
 ### Changing our docker command
 
-.middle[
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv
 -d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
 -f /data/phantom_heuristic.py -c dcm2niix -o /data/output
 ```
-]
 
 ---
 ### Updated docker command
 
-.middle[
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv
 -d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
 -f /data/phantom_heuristic.py -c dcm2niix -b -o /data/output
 ```
-]
 
 --
 
@@ -389,7 +398,7 @@ Let's check:
 
 - A change to `heudiconv` will be coming soon that fixes most of these problems
 
- - However, event files and participants.tsv will still need to be created
+ - However, [event files](https://github.com/INCF/BIDS-examples/blob/master/ds001/sub-02/func/sub-02_task-balloonanalogrisktask_run-01_events.tsv) and [participants.tsv](https://github.com/INCF/BIDS-examples/blob/master/ds001/participants.tsv) will still need to be created
 
 ---
 name: nowwhat
