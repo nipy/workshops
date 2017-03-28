@@ -71,7 +71,9 @@ ENV MATLABCMD="/opt/mcr/v92/toolbox/matlab" \
 # Clear apt cache and other empty folders
 #----------------------------------------
 USER root
-RUN apt-get clean && apt-get autoremove -y && \
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
+         man && \
+    apt-get clean && apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /boot /media /mnt /srv && \
     chmod a+w /tmp
 
