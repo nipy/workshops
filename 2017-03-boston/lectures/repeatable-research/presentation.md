@@ -212,12 +212,12 @@ class: middle
 ## Let's get started
 
 ```bash
-  docker run -it --rm --security-opt seccomp:unconfined -v bids-data:/data
-    -v $PWD:/src/workdir test36:trace bash
+  docker run -it --rm -v /software/work:/home/jovyan/work --security-opt
+    seccomp:unconfined --name repeat nipype/workshops:latest-nofsspm bash
 
-  root@b6d7839a5760:/src/workdir#
+  jovyan@73a1924ff93c:~/work$ mkdir reprozip
+  jovyan@73a1924ff93c:~/work$ cd reprozip
 ```
-
 ---
 ## Using `script`
 .left-column2[
@@ -236,7 +236,6 @@ $ Ctrl+D
 Now let us examine what the file typescript contains.
 ```bash
 $ more typescript
-$ cat typescript | grep '^# [^#]'
 ```
 ]
 .right-column2[
@@ -274,7 +273,8 @@ commands:
 
 For a first example we will use `reprozip` on running `bet` from the command line.
 ```bash
-$ reprozip trace -d bet-trace bet sub-01_T1w.nii.gz brain
+$ reprozip trace -d bet-trace bet
+     ../data/ds000114/sub-01/anat/sub-01_T1w.nii.gz brain
 ```
 --
 This creates a `config.yml` file in the directory `bet-trace`
@@ -299,25 +299,25 @@ other_files: --> These are all files that were used during the process
 ```yaml
 runs:
 - architecture: x86_64
-  argv: [bet, sub-01_T1w.nii.gz, brain]
+  argv: [bet, ../data/ds000114/sub-01/anat/sub-01_T1w.nii.gz, brain]
   binary: /usr/lib/fsl/5.0/bet
-  distribution: [debian, stretch/sid]
+  distribution: [debian, '8.7']
   environ: {
-    ACCEPT_INTEL_PYTHON_EULA: 'yes',
-    HOME: /root, HOSTNAME: 72bfac9cef1d, LANG: C.UTF-8, LC_ALL: C.UTF-8,
+    FSLDIR: /usr/share/fsl/5.0,
+    FSLMULTIFILEQUIT: 'TRUE',
+    FSLOUTPUTTYPE: NIFTI_GZ,
+    HOME: /home/jovyan,
     LD_LIBRARY_PATH: '/usr/lib/fsl/5.0:',
-    OMP_NUM_THREADS: '1', OS: Linux,
-    PATH: '/usr/local/miniconda/bin:/usr/lib/ruby/gems/2.3/bin:/bin::
-        /usr/lib/fsl/5.0:/usr/lib/afni/bin:/opt/freesurfer/bin:/opt/
-        freesurfer/fsfast/bin:/opt/freesurfer/tktools:/opt/freesurfer/
-        mni/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'}
+    PATH: '/opt/PALM:/opt/afni:/opt/c3d/bin:/opt/ants:/usr/lib/fsl/5.0:
+        /opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:
+            /usr/bin:/sbin:/bin',
   exitcode: 0
-  gid: 0
-  hostname: 72bfac9cef1d
+  gid: 100
+  hostname: 25b88f158a09
   id: run0
-  system: [Linux, 4.9.12-moby]
-  uid: 0
-  workingdir: /src/workdir
+  system: [Linux, 4.9.13-moby]
+  uid: 1000
+  workingdir: /home/jovyan/work/reprozip
 ```
 ---
 ## Take a closer look at each section: `inputs_outputs`
@@ -337,12 +337,14 @@ The output from the run.
 ```yaml
 inputs_outputs:
 - name: arg
-  path: /src/workdir/sub-01_T1w.nii.gz
+  path: /home/jovyan/work/data/ds000114/.git/annex/objects/QP/jm/
+    MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz/
+    MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz
   written_by_runs: []
-  read_by_runs: [0] ---> This is an input
+  read_by_runs: [0]
 - name: brain.nii.gz
-  path: /src/workdir/brain.nii.gz
-  written_by_runs: [0]  ----> This is an output
+  path: /home/jovyan/work/reprozip/brain.nii.gz
+  written_by_runs: [0]
   read_by_runs: []
 ```
 ---
@@ -357,23 +359,23 @@ A description from `reprozip`
 --
 ```yaml
 packages:
-    - name: "coreutils"
-      version: "8.25-2ubuntu2"
-      size: 6414336
-      packfiles: true
-      files:
-        # Total files used: 58.86 KB
-        # Installed package size: 6.12 MB
-        - "/bin/rm" # 58.86 KB
-    - name: "dash"
-      version: "0.5.8-2.1ubuntu2"
-      size: 247808
-      packfiles: true
-      files:
-        # Total files used: 150.46 KB
-        # Installed package size: 242.00 KB
-        - "/bin/dash" # 150.46 KB
-        - "/bin/sh" # Link to /bin/dash
+  - name: "coreutils"
+    version: "8.23-4"
+    size: 14590976
+    packfiles: true
+    files:
+      # Total files used: 58.66 KB
+      # Installed package size: 13.92 MB
+      - "/bin/rm" # 58.66 KB
+  - name: "dash"
+    version: "0.5.7-4+b1"
+    size: 195584
+    packfiles: true
+    files:
+      # Total files used: 122.46 KB
+      # Installed package size: 191.00 KB
+      - "/bin/dash" # 122.46 KB
+      - "/bin/sh" # Link to /bin/dash
 ...
 ```
 ---
@@ -381,25 +383,25 @@ packages:
 
 ```yaml
 ...
-  - name: "fsl-5.0-core"
-    version: "5.0.9-3~nd16.04+1"
-    size: 39678976
-    packfiles: true
-    files:
-      # Total files used: 2.33 MB
-      # Installed package size: 37.84 MB
-      - "/usr/lib/fsl/5.0" # Directory
-      - "/usr/lib/fsl/5.0/bet" # 13.41 KB
-      - "/usr/lib/fsl/5.0/bet2" # 71.14 KB
-      - "/usr/lib/fsl/5.0/imtest" # 4.29 KB
-      - "/usr/lib/fsl/5.0/libfslio.so" # 50.25 KB
-      - "/usr/lib/fsl/5.0/libmeshclass.so" # 94.34 KB
-      - "/usr/lib/fsl/5.0/libmiscmaths.so" # 571.57 KB
-      - "/usr/lib/fsl/5.0/libnewimage.so" # 1.46 MB
-      - "/usr/lib/fsl/5.0/libprob.so" # 31.66 KB
-      - "/usr/lib/fsl/5.0/libutils.so" # 50.45 KB
-      - "/usr/lib/fsl/5.0/remove_ext" # 4.06 KB
-      - "/usr/share/fsl/5.0/bin" # Link to /usr/lib/fsl/5.0
+- name: "fsl-5.0-core"
+  version: "5.0.9-3~nd80+1"
+  size: 40948736
+  packfiles: true
+  files:
+    # Total files used: 2.60 MB
+    # Installed package size: 39.05 MB
+    - "/usr/lib/fsl/5.0/bet" # 13.41 KB
+    - "/usr/lib/fsl/5.0/bet2" # 75.13 KB
+    - "/usr/lib/fsl/5.0/imtest" # 4.29 KB
+    - "/usr/lib/fsl/5.0/libfslio.so" # 50.61 KB
+    - "/usr/lib/fsl/5.0/libfslvtkio.so" # 86.88 KB
+    - "/usr/lib/fsl/5.0/libmeshclass.so" # 98.85 KB
+    - "/usr/lib/fsl/5.0/libmiscmaths.so" # 569.38 KB
+    - "/usr/lib/fsl/5.0/libnewimage.so" # 1.63 MB
+    - "/usr/lib/fsl/5.0/libprob.so" # 31.93 KB
+    - "/usr/lib/fsl/5.0/libutils.so" # 50.59 KB
+    - "/usr/lib/fsl/5.0/remove_ext" # 4.06 KB
+    - "/usr/share/fsl/5.0/bin" # Link to /usr/lib/fsl/5.0
 ...
 ```
 ---
@@ -413,10 +415,17 @@ A description from `reprozip`
 Additional files needed for the run
 ```yaml
 other_files:
-  - "/etc/ld.so.cache" # 31.01 KB
-  - "/lib64/ld-linux-x86-64.so.2" # Link to /lib/x86_64-linux-gnu/ld-2.23.so
-  - "/src/workdir" # Directory
-  - "/src/workdir/sub-01_T1w.nii.gz" # 13.07 MB
+  - "/etc/ld.so.cache" # 26.46 KB
+  - "/home/jovyan/work/data/ds000114/.git/annex/objects/QP/jm/
+     MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz/
+     MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz" # 8.28 MB
+  - "/home/jovyan/work/data/ds000114/sub-01/anat/sub-01_T1w.nii.gz"
+     # Link to /home/jovyan/work/data/ds000114/.git/annex/objects/QP/jm/
+       MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz/
+       MD5E-s8677710--d6820f6cb8fb965e864419c14f6a22d5.nii.gz
+  - "/home/jovyan/work/reprozip" # Directory
+  - "/lib64/ld-linux-x86-64.so.2" # Link to /lib/x86_64-linux-gnu/ld-2.19.so
+  - "/usr/lib/fsl/5.0" # Directory
 ```
 ---
 ## Packing this analysis
@@ -434,7 +443,7 @@ This file now contains all the data and code to reproduce the analysis.
 Let's quit docker, and get a container with no FSL, no Neurodebian.
 ```bash
 $ docker pull continuumio/miniconda
-$ docker run -it --rm -v $PWD:/src continuumio/miniconda bash
+$ docker run -it --rm -v /software/work/reprozip:/src continuumio/miniconda bash
 ```
 ---
 ## Replaying the analyis
@@ -490,10 +499,11 @@ Let's look at what the setup unpacked
 ```bash
 $ ls better
 config.yml  inputs.tar.gz  root
-$ ls better/root
-bin  etc  lib  lib64  src  usr
-$ ls better/root/src/workdir/
-sub-01_T1w.nii.gz
+$ls better/root
+bin  etc  home	lib  lib64  usr
+$ ls better/root/home/jovyan/work/data/ds000114/sub-01/anat/sub-01_T1w.nii.gz
+better/root/home/jovyan/work/data/ds000114/sub-01/anat/sub-01_T1w.nii.gz
+$ ls better/root/home/jovyan/work/reprozip/
 ```
 
 --
@@ -503,8 +513,8 @@ $ reprounzip chroot run better
 
 *** Command finished, status: 0
 
-$ ls better/root/src/workdir/
-brain.nii.gz  sub-01_T1w.nii.gz
+$ ls better/root/home/jovyan/work/reprozip/
+brain.nii.gz
 ```
 ---
 ## Review questions
