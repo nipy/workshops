@@ -1,0 +1,4 @@
+wf.connect([
+    (node_smooth, node_mask, [('out_file', 'in_file')]),
+    (node_bet, node_mask, [('mask_file', 'mask_file')])
+])
