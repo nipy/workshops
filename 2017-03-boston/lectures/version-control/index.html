@@ -648,10 +648,15 @@ To get content for `derivatives/` we can either
   http://datasets.datalad.org
 
   ```shell
-  $> git remote add datasets.datalad.org http://datasets.datalad.org/workshops/nipype-2017/ds000114/.git
+  $> git remote add datalad http://datasets.datalad.org/workshops/nipype-2017/ds000114/.git
   ```
   when we will run next `git annex get` command, annex will discover
   that remote's UUID.
+
+---
+## **git-annex**: The biography of ds000114
+
+<img src="pics/datalad-notes.svg" style="width: 100%" />
 
 ---
 ## **git-annex**: **get**ing more data
@@ -663,15 +668,15 @@ N.B. do not try parallel download from `datalad-archives` for now --
 it wouldn't work
 
   ```shell
-$> git annex get --from=datasets.datalad.org -J4 derivatives/freesurfer/sub-01
-get derivatives/freesurfer/sub-01/mri/brain.mgz (from datasets.datalad.org...) (checksum...) ok
-get derivatives/freesurfer/sub-01/mri/brain.finalsurfs.mgz (from datasets.datalad.org...) (checksum...) ok
-get derivatives/freesurfer/sub-01/mri/brainmask.auto.mgz (from datasets.datalad.org...) (checksum...) ok
-get derivatives/freesurfer/sub-01/mri/filled.mgz (from datasets.datalad.org...) (checksum...) ok
+$> git annex get --from=datalad -J4 derivatives/freesurfer/sub-01
+get derivatives/freesurfer/sub-01/mri/brain.mgz (from datalad...) (checksum...) ok
+get derivatives/freesurfer/sub-01/mri/brain.finalsurfs.mgz (from datalad...) (checksum...) ok
+get derivatives/freesurfer/sub-01/mri/brainmask.auto.mgz (from datalad...) (checksum...) ok
+get derivatives/freesurfer/sub-01/mri/filled.mgz (from datalad...) (checksum...) ok
 ...
 ```
 
-`--from=datasets.datalad.org` in above command is not mandatory -- git
+`--from=datalad` in above command is not mandatory -- git
 annex will just then try any available source
 
 ---
