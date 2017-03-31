@@ -30,16 +30,18 @@ layout: false
 
 * Grab the data (using datalad!)
 
-```bash
+```
 $ docker run -it --rm -v $PWD:/data nipype/workshops:latest-base bash
 # Inside container
+> cd /data
 > git clone http://datasets.datalad.org/test/dartmouth-siemens/PHANTOM1_3/.git
 > cd PHANTOM1_3
-> datalad get -J6 YAROSLAV_DBIC-TEST1/
+> datalad get -J6 YAROSLAV_DBIC-TEST1/ #ensure all the data is downloaded for the demo to work!
 > exit
 ```
 
 ---
+
 name: datamanage
 
 ### Data management
@@ -94,7 +96,7 @@ name: heudiconv
     - `dcm2niix`
 
 ---
-class: center
+class: middle
 layout: true
 ---
 name: conversion
@@ -109,27 +111,23 @@ docker run --rm -it -v $PWD:/data nipy/heudiconv
 ---
 ### Sample conversion
 
-.middle[
 Start out running heudiconv without any converter, just passing in dicoms.
 
 ```bash
-docker run --rm -it -v $PWD:/data nipy/heudiconv
+docker run --rm -it -v $PWD:/data nipy/heudiconv \
 -d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
 ```
-]
 
 ---
 ### Sample conversion
 
-.middle[
 Start out running heudiconv without any converter, just passing in dicoms.
 
 ```bash
-docker run --rm -it -v $PWD:/data nipy/heudiconv
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
+docker run --rm -it -v $PWD:/data nipy/heudiconv \
+-d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /convertall.py -c none -o /data/output
 ```
-]
 
 ---
 layout: false
@@ -348,8 +346,8 @@ def infotodict(seqinfo):
 ### Changing our docker command
 
 ```bash
-docker run --rm -it -v $PWD:/data nipy/heudiconv
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
+docker run --rm -it -v $PWD:/data nipy/heudiconv \
+-d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /convertall.py -c none -o /data/output
 ```
 
@@ -357,8 +355,8 @@ docker run --rm -it -v $PWD:/data nipy/heudiconv
 ### Changing our docker command
 
 ```bash
-docker run --rm -it -v $PWD:/data nipy/heudiconv
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
+docker run --rm -it -v $PWD:/data nipy/heudiconv \
+-d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /data/phantom_heuristic.py -c none -o /data/output
 ```
 
@@ -366,8 +364,8 @@ docker run --rm -it -v $PWD:/data nipy/heudiconv
 ### Changing our docker command
 
 ```bash
-docker run --rm -it -v $PWD:/data nipy/heudiconv
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
+docker run --rm -it -v $PWD:/data nipy/heudiconv \
+-d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /data/phantom_heuristic.py -c dcm2niix -o /data/output
 ```
 
@@ -375,8 +373,8 @@ docker run --rm -it -v $PWD:/data nipy/heudiconv
 ### Updated docker command
 
 ```bash
-docker run --rm -it -v $PWD:/data nipy/heudiconv
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
+docker run --rm -it -v $PWD:/data nipy/heudiconv \
+-d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /data/phantom_heuristic.py -c dcm2niix -b -o /data/output
 ```
 
