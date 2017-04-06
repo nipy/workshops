@@ -23,13 +23,13 @@ class: center, middle, inverse
 ---
 layout: false
 
-- Why do we write tests
+- Why do we write tests?
 
-- What are the various types of software tests
+- What are the various types of software tests?
 
-- How to write simple unit and regression tests
+- How to write simple unit and regression tests?
 
-- What are the testing frameworks in Python
+- What are the testing frameworks in Python?
 
 ---
 name: inverse
@@ -132,7 +132,7 @@ layout: false
 
 &nbsp;
 
-[Excamples from Nipype code](https://github.com/nipy/nipype/blob/master/nipype/pipeline/engine/tests/test_engine.py#L45)
+[Examples from Nipype code](https://github.com/nipy/nipype/blob/master/nipype/pipeline/engine/tests/test_engine.py#L45)
 
 
 ---
@@ -189,7 +189,9 @@ class: center, middle, inverse
 ## Exercises
 ---
 layout: false
+#### All notebooks with solutions to the following exercises can be found in the [repository](https://github.com/nipy/workshops/tree/master/170327-nipype/notebooks/testing/solutions)
 
+---
 ### <span style="color:purple">Assert statement</span>
 
 &nbsp;
@@ -201,6 +203,7 @@ assert Expression[, Arguments]
 
 - if the Expression is false, `assert` returns an `AssertionError`
 
+- a rendered version of a notebook with examples can be found  [here](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/testing/solutions/asserts.ipynb)
 ---
 ### <span style="color:purple">Assert statement</span>
 
@@ -238,9 +241,20 @@ assert Expression[, Arguments]
 ---
 ### <span style="color:purple">Finding area of a sector of a circle </span>
 
+<img src="img/sector.png" width="40%" />
+--
+
+- try to derive the equation
+- think about examples you can use to verify your solution, e.g.:
+  - what is the area when angle is 0?
+  - what is the area when angle is 360 deg?
+- write the python code to automatically test your solution
+
+--
+
 &nbsp;
 
-<img src="img/sector.png" width="50%" />
+An exemplary solution can be found [here](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/testing/solutions/sector_area.ipynb)
 
 ---
 ### <span style="color:purple">Finding the positions of local maxima in a list of numbers  </span>
@@ -252,6 +266,13 @@ Check the output of your function for these examples:
 - list: `[-1, 2, 1, 3, 2]`, expected output: `[1, 3]`
 
 - list: `[4, 3, 4, 3]`, expected output: `[0, 2]`
+
+- list: `[1, 2, 3]`, expected output: `[2]`
+
+--
+
+&nbsp;
+An exemplary solution can be found [here](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/testing/solutions/maxima.ipynb)
 
 ---
 ### <span style="color:purple">Finding the mean absolute value of the list of pseudo-random numbers </span>
@@ -267,6 +288,11 @@ Check the output of your function for these examples:
 
   - the saved value can be used in a simple regression test as the expected value
 
+--
+
+&nbsp;
+
+An exemplary solution can be found [here](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/testing/solutions/random_numbers.ipynb)
 ---
 name: inverse
 layout: true
@@ -325,6 +351,51 @@ Which framework should you use?
 - many useful features including fixtures, test parametrization, etc.
 
 ---
+### <span style="color:purple">Unit tests with Pytest library</span>
+
+#### Running all previous tests using pytest
+
+- create a directory with all functions written as python scripts
+
+- create separate python scripts that contain all previously written tests
+
+- run `pytest` within the directory
+  ```bash
+  pytest
+  ```
+- try a `-v` option
+  ```bash
+  pytest -v
+  ```
+--
+
+&nbsp;
+
+- an exemplary directory with all functions and tests can be found [here](https://github.com/nipy/workshops/tree/master/170327-nipype/notebooks/testing/pytest_solutions)
+
+
+---
+### <span style="color:purple">Unit tests with Pytest library</span>
+
+
+#### Use pytest features to rewrite your tests sets
+
+- read about [parametrization](https://docs.pytest.org/en/latest/parametrize.html) and try to use it within your test functions
+
+- read about [skip/xfail](https://docs.pytest.org/en/latest/skipping.html) and
+ and [exceptions check](https://docs.pytest.org/en/latest/assert.html#assertions-about-expected-exceptions), try to use it in your existing tests and write new tests
+
+- check if your functions still pass all tests
+
+- if your tests fail rewrite the function or at least use `pytest.mark.xfail`  and provide the `reason`
+
+--
+
+&nbsp;
+
+- an exemplary directory with all functions and tests can be found [here](https://github.com/nipy/workshops/tree/master/170327-nipype/notebooks/testing/pytest_mark_solutions)
+
+---
 ### <span style="color:purple">Continuous Integration</span>
 
 - Integrating the test suite into the development process
@@ -342,7 +413,14 @@ Which framework should you use?
 
 Example of travis file from Nipype project is [here](https://github.com/nipy/nipype/blob/master/.travis.yml).
 
+---
+### <span style="color:purple">External resources</span>
 
+- [Software Carpentry](http://katyhuff.github.io/python-testing/index.html)
+
+- [Nice presentation with hands-on examples](https://github.com/ASPP/testing_debugging_profiling)
+
+- [Neurohackweek: Satra's slides](https://github.com/neurohackweek/nhw-lesson-testing)
 ---
 name: inverse
 layout: true
