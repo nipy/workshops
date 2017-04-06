@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<title>Nipype workshop and hackweek: Review Questions</title>
+
+<xmp theme="united" style="display:none;">
+**Docker**
+
+1. [Understand what a container is](https://medium.freecodecamp.com/a-beginner-friendly-introduction-to-containers-vms-and-docker-79a9e3e119b) and what [a running instance of a container is](http://paislee.io/how-to-automate-docker-deployments/)
+
+2. [Pull and remove a Docker image](http://nipy.org/workshops/2017-03-boston/lectures/lesson-container/#29)
+
+3. [Use a docker container](http://nipy.org/workshops/2017-03-boston/lectures/lesson-container/#29)
+
+4. [Mount a host volume into the container](http://nipy.org/workshops/2017-03-boston/lectures/lesson-container/#30)
+
+5. [Map a host port into the container](http://nipy.org/workshops/2017-03-boston/lectures/lesson-container/#34)[ and use a Jupyter Lab](http://nipy.org/workshops/2017-03-boston/lectures/lesson-container/#34)
+
+6. [Modify and save a running container](http://docs.oracle.com/cd/E52668_01/E75728/html/section_c5q_n2z_fp.html)
+
+7. [Build a container](http://nipy.org/workshops/2017-03-boston/lectures/lesson-container/#31)
+
+8. [Remove an instance of a container](http://nipy.org/workshops/2017-03-boston/lectures/lesson-container/#30)
+
+9. [Create an image from a stopped instance of a container](http://docs.oracle.com/cd/E52668_01/E75728/html/section_c5q_n2z_fp.html)
+
+**Git**
+
+1. [Configure git](http://swcarpentry.github.io/git-novice/02-setup/)
+
+2. [Fork a repository on GitHub](https://help.github.com/articles/fork-a-repo/)
+
+3. [Clone a repository locally](https://help.github.com/articles/cloning-a-repository/)
+
+4. [Set a pointer to upstream repository](https://help.github.com/articles/configuring-a-remote-for-a-fork/)
+
+5. [Make modifications to my repository and save the modifications as a commit](https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository)
+
+6. [Merge changes others have made to the repository](https://help.github.com/articles/merging-an-upstream-repository-into-your-fork/)
+
+7. [Resolve conflicts between my changes and other changes](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/)
+
+8. [Understand that git uses references to manage content](https://www.atlassian.com/git/tutorials/refs-and-the-reflog)
+
+9. [Understand the different components of the .git folder](https://medium.freecodecamp.com/understanding-git-for-real-by-exploring-the-git-directory-1e079c15b807)
+
+**Git-annex/DataLad**
+
+1. [Use git annex to retrieve data from a git annex repo](https://git-annex.branchable.com/git-annex-get/)
+
+2. [Add additional remotes to git annex repo which provide data files](https://git-annex.branchable.com/walkthrough/adding_a_remote/) [[version-control/#26](http://nipy.org/workshops/2017-03-boston/lectures/version-control/#26)]
+
+3. [Use datalad to fetch individual data elements](http://docs.datalad.org/en/latest/generated/man/datalad-get.html)
+
+4. [Use datalad to fetch metadata of all datasets at http://datasets.datalad.org ](http://docs.datalad.org/en/latest/metadata.html#sample-datasets-with-meta-data)
+
+5. [Use datalad to fetch individual datasets](http://docs.datalad.org/en/latest/generated/man/datalad-install.html)
+
+6. [Understand differences between git and git-annex](http://nipy.org/workshops/2017-03-boston/lectures/version-control/#32)
+
+7. [Understand differences between git-annex and datalad](http://nipy.org/workshops/2017-03-boston/lectures/version-control/#36)
+
+**Numpy/Scipy/Matplotlib/Seaborn**
+
+1. Access values in n-dimensional numpy arrays (ndarrays) by [slicing and basic indexing](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/scientific-python/scientific_python.ipynb#Indexing-in-N-dimensions)
+
+2. Apply vectorized numpy functions like sum() or mean() to ndarrays
+
+3. Multiply one 2D numpy array by another (i.e., matrix multiplication)
+
+4. [Read data from a CSV](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/scientific-python/scientific_python.ipynb#Wrangling-data-in-pandas) or similar file into a pandas DataFrame with read_csv
+
+5. [Access columns and rows](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/scientific-python/scientific_python.ipynb#Indexing-pandas-DataFrames) in a DataFrame
+
+6. [Use ](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/scientific-python/scientific_python.ipynb#The-split-apply-combine-pattern)[groupby](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/scientific-python/scientific_python.ipynb#The-split-apply-combine-pattern)[ to apply the same operation](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/scientific-python/scientific_python.ipynb#The-split-apply-combine-pattern) (e.g.,  to each subset of a DataFrame
+
+7. [Make basic plots](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/scientific-python/scientific_python.ipynb#%22Simple%22-examples) (e.g., line or scatter plots) with matplotlib
+
+8. [Use seaborn to create high-level plots](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/scientific-python/scientific_python.ipynb#Plotting-in-seaborn) by passing in pandas DataFrames
+
+**Using Python for neuroimaging**
+
+1. Nibabel
+
+    1. [Load and inspect images](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nibabel_nilearn/nibabel_nilearn.ipynb#Loading-and-inspecting-images-in-nibabel), such as .nii or .mgz files, [in nibabel](http://nipy.org/nibabel/nibabel_images.html)
+
+    2. [View summary information with nib-ls](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nibabel_nilearn/nibabel_nilearn.ipynb#nib-ls) and in the Python shell
+
+    3. [Save modified images and verify their contents](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nibabel_nilearn/nibabel_nilearn.ipynb#Creating-and-saving-images)
+
+    4. Load non-image formats, such as FreeSurfer surfaces or annotation files
+
+2. Nilearn
+
+    5. [Plot anatomical images, overlays and statistical maps](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nibabel_nilearn/nibabel_nilearn.ipynb#Plotting-images)
+
+    6. [Plot surfaces](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nibabel_nilearn/nibabel_nilearn.ipynb#Plotting-surfaces)
+
+    7. [Mask/unmask functional datasets](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nibabel_nilearn/nibabel_nilearn.ipynb#Masking-and-Un-masking-data)
+
+    8. [Apply scikit-learn algorithms to functional data](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nibabel_nilearn/nibabel_nilearn.ipynb#Simple-MVPA-Example)
+
+**Reprozip**
+
+1. [What kind of operating systems can reprozip be used on?](http://nipy.org/workshops/2017-03-boston/lectures/repeatable-research/index.html#9)
+
+2. [What kind of environments can reprounzip be used on?](https://reprozip.readthedocs.io/en/1.0.x/unpacking.html#unpackers)
+
+3. [Install reprozip and reprounzip](https://reprozip.readthedocs.io/en/1.0.x/install.html)
+
+4. [Use reprozip to capture the trace of a command](http://nipy.org/workshops/2017-03-boston/lectures/repeatable-research/index.html#18)
+
+5. [Use reprozip to pack the files required to replay the command and share with a colleague](http://nipy.org/workshops/2017-03-boston/lectures/repeatable-research/index.html#26)
+
+6. [Provide a colleague with instructions to replay the command from the pack file.](http://nipy.org/workshops/2017-03-boston/lectures/repeatable-research/index.html#28)
+
+7. [Use reprounzip to replay the command in a virtual machine](https://reprozip.readthedocs.io/en/1.0.x/unpacking.html#the-vagrant-unpacker-building-a-virtual-machine)
+
+**Nipype intro (Interfaces, Workflows)**
+
+1. Understand Nipype’s design elements: [Interfaces, Workflows and Plugins](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nipype_101_tasks/Day4.ipynb)
+
+2. Use the [nipype.interfaces.fsl.BET](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/new-workflows-and-interfaces/advanced_interfaces.ipynb#Example-of-interface:-FSL%27s-BET) interface directly
+
+3. Understand the three main components of a Nipype interface: [inputs, outputs and core.](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/new-workflows-and-interfaces/advanced_interfaces.ipynb#But-wait!-My-tool-is-not-(yet)-supported-by-Nipype)
+
+4. [Get help when using a Nipype interface](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/new-workflows-and-interfaces/advanced_interfaces.ipynb#Specifying-the-outputs)
+
+5. Able to write a [simple Nipype workflow importing interfaces from nipype](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/new-workflows-and-interfaces/advanced_workflows.ipynb#The-smoothing-workflow)
+
+6. Able to [find data in a data folder using the DataGrabber](https://miykael.github.io/nipype_tutorial/notebooks/basic_data_input.html)
+
+7. Able to find data [using bids on a BIDS dataset](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/basic-bids/basic_data_input_bids.ipynb)
+
+8. Able to use [iterables](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nipype_101_tasks/Day4.ipynb#Task-2:-Run-both-subjects%27-functional-through-MCFLIRT)
+
+9. Able to use [Mapnodes](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nipype_101_tasks/Day4.ipynb#Task-1:-Run-both-T1s-through-a-single-BET-interface)
+
+10. [Able to use a Joinnode](https://gist.github.com/satra/ed3760e9f849d9ca82a9)
+
+11. Able to use the [Function interface](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nipype_101_tasks/Day4.ipynb#Task-4:-Use-a-function-node-to-get-T1w-+-EPIs-using-bids)
+
+12. Able to [save data using a DataSink](https://miykael.github.io/nipype_tutorial/notebooks/basic_data_output.html)
+
+13. Able to [use a Plugin](https://miykael.github.io/nipype_tutorial/notebooks/basic_plugins.html)
+
+14. Do you feel ready to write a very simple Nipype workflow? (for instance, with a couple of nodes of pre-existing interfaces)
+
+15. Do you think Nipype Workflows are useful in your neuroimage processing?
+
+**Mindboggle**
+
+1. Explain what is the [purpose of the Mindboggle software](http://mindboggle.readthedocs.io/en/latest/faq/why_mindboggle.html).
+
+2. Explain what data Mindboggle takes as its [inputs](http://mindboggle.readthedocs.io/en/latest/#before-running-mindboggle).
+
+3. Explain what kind of data Mindboggle generates as its [output](http://mindboggle.readthedocs.io/en/latest/#mindboggle-output).
+
+4. [Install Mindboggle](http://mindboggle.readthedocs.io/en/latest/#installing-mindboggle).
+
+5. Run the [mindboggle command](http://mindboggle.readthedocs.io/en/latest/#running-mindboggle) from the command line.
+
+6. Run the roygbiv command from the command line to visualize mindboggle output on the browser.
+
+7. Use a function directly from Mindboggle’s Python library in a Python console or Jupyter notebook.
+</xmp>
+
+<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</html>
