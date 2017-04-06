@@ -1,26 +1,68 @@
-FROM nipype/workshops:latest-base
+FROM jupyter/base-notebook
 MAINTAINER Satrajit Ghosh <satra@mit.edu>
 
-#-------------
-# Install ANTS
-#-------------
-# USER root
-# RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
-#        build-essential && \
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-# USER $NB_USER
-# WORKDIR /tmp
-# RUN git clone https://github.com/stnava/ANTs.git && \
-#    cd ANTs && \
-#    git checkout 767f756bc0e423cd503a24c806b6578aaeb5b82f && \
-#    mkdir build && cd build && cmake .. && make && \
-#    mkdir -p /opt/ants && \
-#    cp bin/* /opt/ants && cp ../Scripts/* /opt/ants && \
-#    cd /tmp && rm -rf ANTs
-RUN curl -sSL https://dl.dropbox.com/s/btep51gtglp7kwh/ants.tgz?dl=0 | tar zx -C /
-ENV ANTSPATH=/opt/ants/ \
-    PATH=/opt/ants:$PATH
+#---------------------------------------------
+# Update OS dependencies and setup neurodebian
+#---------------------------------------------
+USER root
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends bzip2 \
+                                                ca-certificates \
+                                                curl \
+                                                tree \
+                                                unzip \
+                                                wget \
+                                                xvfb \
+                                                zip \
+                                                vim \
+                                                emacs-nox \
+                                                graphviz \
+                                                less \
+                                                git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+#-------------------------------------------------
+# Update and install conda dependencies for nipype
+#-------------------------------------------------
+USER $NB_USER
+
+# Make sure that necessary packages are installed
+RUN conda install --quiet --yes nomkl \
+                                matplotlib \
+                                pandas \
+                                pip \
+                                seaborn \
+                                reprozip \
+                                reprounzip \
+                                prov \
+                                pytest \
+                                pythreejs \
+                                traits \
+                                docutils \
+                                xvfbwrapper && \
+    conda install --quiet --yes -c clinicalgraphics vtk=7.1.0 && \
+    conda clean -tipsy && \
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
+    jupyter nbextension enable --py --sys-prefix pythreejs
+
+# Import matplotlib the first time to build the font cache.
+ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
+RUN MPLBACKEND=Agg $CONDA_DIR/bin/python -c "import matplotlib.pyplot"
+
+#-------------------------------------------------------------------
+# Update pip, nibabel (for Cifti) and nilearn (for surface plotting)
+#-------------------------------------------------------------------
+RUN pip install --upgrade --quiet pip && \
+    pip install --quiet pybids==0.1 && \
+    pip install --upgrade --quiet matplotlib --upgrade-strategy only-if-needed && \
+    pip install --quiet https://github.com/nipy/nibabel/archive/ca977abeb77f95ed3a40b7b89c310b286b9885b7.zip && \
+    rm -rf ~/.cache/pip
+
+#---------------------------------------------
+# Install newest version of nipype from Github
+#---------------------------------------------
+RUN pip install --quiet https://github.com/nipy/nipype/archive/master.zip && \
+    rm -rf ~/.cache/pip
 
 #-------------------
 # Install mindboggle
@@ -30,16 +72,18 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
         build-essential libsm-dev libx11-dev libxt-dev libxext-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN chown $NB_USER /opt
 USER $NB_USER
 RUN conda install --quiet --yes cmake && \
     conda clean -tipsy
 WORKDIR /tmp
 RUN git clone https://github.com/nipy/mindboggle && \
-    cd mindboggle && git checkout cb37b8fa3b2bd1b272cb932e7f15c3ec110cb5d7 && \
+    cd mindboggle && \
+    git checkout cb37b8fa3b2bd1b272cb932e7f15c3ec110cb5d7 && \
     python setup.py install && \
     mkdir /opt/mindboggle && mkdir /opt/mindboggle/vtk_cpp_tools && \
-    cd /opt/mindboggle/vtk_cpp_tools && \
-    cmake /tmp/mindboggle/vtk_cpp_tools -DCMAKE_EXE_LINKER_FLAGS="-L /opt/conda/lib" && \
+    cd /opt/mindboggle/vtk_cpp_tools
+RUN cmake /tmp/mindboggle/vtk_cpp_tools -DCMAKE_EXE_LINKER_FLAGS="-L /opt/conda/lib" && \
     make && cd .. && rm -rf /tmp/mindboggle && \
     curl -sSL https://osf.io/rh9km/?action=download\&version=2 -o templates.zip && \
     unzip templates.zip && rm -rf templates.zip __MACOSX
