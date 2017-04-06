@@ -15,7 +15,7 @@ def test_gt0(rad1, rad2, ang):
 def test_expected(inputs, expected):
     assert sector_area(*inputs) == expected
 
-@pytest.mark.xfail
+@pytest.mark.xfail(reason="my function doesn't rise an exception - TODO")
 @pytest.mark.parametrize("inputs", [[5, 1, -30], [5, 7, 360]])
 def test_exception(inputs, expected):
     with pytest.raises.Exception:
