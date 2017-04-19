@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<title>Nipype workshop and hackweek: March 27 - 31, 2017</title>
+
+<xmp theme="united" style="display:none;">
+# Hands-on Reproducible and Scalable Brain Imaging Analysis with Nipype
+
+Nipype is a Python-based scalable workflow engine with extensive support for
+neuroimaging. The goals of this workshop are two-fold. First, to enable attendees
+to become familiar with reproducible and scalable analysis with the [Nipype](http://nipy.org/nipype)
+platform. Second, to spend time interacting and hacking with developers of
+Nipype and other scientific software.
+
+## Spatiotemporal coordinates
+
+#### Location: Massachusetts Institute of Technology, Cambridge, Massachusetts, USA
+
+#### Dates: March, 27 - 31, 2017
+
+#### Times: 9am - 6pm (Friday we will finish at 4pm)
+
+## REGISTRATION
+
+Cost: $125 per person (Fees cover lunches and refreshments.)
+Limited to 30 participants.
+
+## Prerequisite courses
+
+Attendees should have taken this on their own time prior to attending:
+
+- (Required) [Unix shell](http://swcarpentry.github.io/shell-novice/)
+- (Required) [Git version control](http://swcarpentry.github.io/git-novice/)
+- (Required) [Basic Python and scientific Python (parts 1.1-1.3)](http://www.scipy-lectures.org/intro/index.html)
+- (Preferred) [Neuroimaging basics](http://www.fmri4newbies.com/tutorials/)
+
+## Additional Requirements
+
+- Aware of different data types (e.g., NIfTI, CIFTI, mgz, DICOM, MINC)
+  used in brain imaging
+- Used at least one neuroimaging package (e.g., AFNI, ANTS, FreeSurfer,
+  FSL, Nipy  - Dipy, Nibabel, Nilearn, Nipy, SPM)
+- A laptop or equivalent. We will have access to cloud computing resources for
+  this workshop.
+
+## Review questions
+
+At the end of the workshop we expect participants to be able to perform [various tasks listed in this document](http://nipy.org/workshops/2017-03-boston/review.html)
+
+## Schedule (9am - 6pm)
+
+### Day 1: Bootcamp - Introduction to reproducible scientific computation
+
+Morning:
+
+- <a href="lectures/intro">Introduction to workshop</a>
+- <a href="lectures/version-control">Using version control for code and data</a>
+- <a href="lectures/lesson-container">Using reproducible container based environments</a>
+
+Afternoon:
+
+- Using Python for scientific and numerical computing: [Numpy](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/numpy-advanced/numpy_advanced_py3.ipynb), [Scipy, Pandas, Matplotlib, Seaborn, Jupyter](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/scientific-python/scientific_python.ipynb)
+- Using Python for neuroimaging: [Nibabel and Nilearn](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/nibabel_nilearn/nibabel_nilearn.ipynb)
+- <a href="lectures/repeatable-research">Capturing execution information for reuse</a>
+
+### Day 2: Mastering Nipype basics
+
+Morning:
+
+- Using Nipype for analysis
+- <a href="lectures/bids-heudiconv">Converting DICOMS to a BIDS dataset</a>
+- [Adapting and running a simple workflow on a BIDS dataset](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/basic-bids/basic_data_input_bids.ipynb)
+- Debugging Nipype errors
+
+Afternoon:
+
+- <a href="lectures/nipype-multicore-hpc">Scaling workflows using multicore machines and HPC clusters</a>
+- Writing new [workflows](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/new-workflows-and-interfaces/advanced_workflows.ipynb) and [interfaces](http://nbviewer.jupyter.org/github/nipy/workshops/blob/master/170327-nipype/notebooks/new-workflows-and-interfaces/advanced_interfaces.ipynb)
+- <a href="lectures/lesson-testing">Writing regression tests</a>
+- Introspecting workflow output and provenance
+
+### Day 3: Using Nipype for anatomical processing
+
+Morning:
+
+- Introducing [Mindboggle](http://www.mindboggle.info/)
+- Processing anatomical data (T1, T2, dMRI)
+
+Afternoon:
+
+- Project and sprint pitches
+- Hacktime and code sprints
+- Unconference session
+
+### Day 4: Using Nipype for functional processing
+
+Morning:
+
+- Introducing [CPAC](https://fcp-indi.github.io/)
+- Processing fmri data (task + resting): [fMRIPrep](https://github.com/nipy/workshops/blob/gh-pages/2017-03-boston/lectures/fmriprep/FMRIPREP.pdf)
+
+Afternoon:
+
+- Hacktime and code sprints
+- Unconference session
+
+### Day 5: Reports and collaborations
+
+Morning:
+
+- Hacktime and code sprints
+- Project reports
+
+Afternoon:
+
+-  Neuroscout, [Neurosynth](http://www.neurosynth.org/), [Neurovault](http://neurovault.org/)
+-  Reproducible research using [ReproNim](http://www.reproducibleimaging.org/)
+   and [Stanford Center for Reproducible Neuroscience](http://reproducibility.stanford.edu/)
+   platforms
+-  Future of Nipype
+
+## Developers in attendance:
+
+- Alejandro De La Vega, University of Texas, Austin
+- Anisha Keshavan, University of California, San Francisco
+- Arno Klein, Child Mind Institute, New York
+- Cameron Craddock, Child Mind Institute, New York
+- Chris Markiewicz, Stanford University, Stanford
+- Dorota Jarecka, MIT, Cambridge
+- Jean-Baptiste Poline, University of California, Berkeley
+- Krzysztof (Chris) Gorgolewski, Stanford University, Stanford
+- Mathias Goncalves, MIT, Cambridge
+- Oscar Esteban, Stanford University, Stanford
+- Satrajit Ghosh, MIT, Cambridge
+- Smruti Padhy, MIT, Cambridge
+- Tal Yarkoni, University of Texas, Austin
+- Yaroslav Halchenko, Dartmouth College
+
+## Support
+
+The workshop is supported by supported by the National Institute Of Biomedical
+Imaging And Bioengineering of the National Institutes of Health under Award
+Number R01EB020740. The content is solely the responsibility of the authors and
+does not necessarily represent the official views of the National Institutes of
+Health.
+
+</xmp>
+
+<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</html>
