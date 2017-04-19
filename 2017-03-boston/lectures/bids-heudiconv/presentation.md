@@ -115,7 +115,7 @@ Start out running heudiconv without any converter, just passing in dicoms.
 
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
+-d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3
 ```
 
 ---
@@ -125,7 +125,7 @@ Start out running heudiconv without any converter, just passing in dicoms.
 
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
+-d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /convertall.py -c none -o /data/output
 ```
 
@@ -161,13 +161,12 @@ def infotodict(seqinfo):
     subindex: sub index within group
     """
 
-    data = create_key('run{item:03d}', outtype=('nii.gz',))
+    data = create_key('run{item:03d}')
+
     info = {data: []}
-    last_run = len(seqinfo)
+
     for s in seqinfo:
-        # TODO: clean it up -- unused stuff laying around
-        x, y, sl, nt = (s[6], s[7], s[8], s[9])
-        info[data].append(s[2])
+        info[data].append(s.series_number)
     return info
 ```
 ---
@@ -199,7 +198,7 @@ def infotodict(seqinfo):
     # paths done in BIDS format
     t1w = create_key('anat/sub-{subject}_T1w')
     dwi = create_key('dwi/sub-{subject}_run-{item:01d}_dwi')
-    rest = create_key('func/sub-{subject}_task-rest_acq-{acq}_run-{item:01d}_bold')
+    rest = create_key('func/sub-{subject}_task-rest_rec-{rec}_run-{item:01d}_bold')
 
     info = {t1w: [], dwi: [], rest: []}
 ```
@@ -211,8 +210,9 @@ def infotodict(seqinfo):
 --
 
 ```python
-for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
-    x,y,sl,nt = (s[6], s[7], s[8], s[9]) # the 4 dim columns
+for idx, s in enumerate(seqinfo):
+   # s is a namedtuple with fields equal to the names of the columns
+   # found in the dicominfo.txt file
 ```
 
 ---
@@ -223,9 +223,8 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
-    x,y,sl,nt = (s[6], s[7], s[8], s[9]) # the 4 dim columns
-    if (sl == 176) and (nt ==1) and ('t1' in s[12]):
-      info[t1w] = [s[2]] # assign if a single scan meets criteria
+    if (sl == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
+      info[t1w] = [s.series_number] # assign if a single scan meets criteria
 ```
 
 ---
@@ -233,9 +232,8 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
-    x,y,sl,nt = (s[6], s[7], s[8], s[9]) # the 4 dim columns
-    if (sl == 176) and (nt ==1) and ('t1' in s[12]):
-      info[t1w] = [s[2]] # assign if a single scan meets criteria
+    if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
+      info[t1w] = [s.series_number] # assign if a single scan meets criteria
 ```
 --
 
@@ -246,11 +244,10 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
-    x,y,sl,nt = (s[6], s[7], s[8], s[9]) # the 4 dim columns
-    if (sl == 176) and (nt ==1) and ('t1' in s[12]):
-      info[t1w] = [s[2]] # assign if a single scan meets criteria
-    if (11 <= sl <= 22) and (nt == 1) and ('dti' in s[12]):
-      info[dwi].append(s[2]) # append if multiple scans meet criteria
+    if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
+      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+    if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
+      info[dwi].append(s.series_number) # append if multiple scans meet criteria
 ```
 
 - Notice there are two diffusion scans shown in dicom info
@@ -260,11 +257,10 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
-    x,y,sl,nt = (s[6], s[7], s[8], s[9]) # the 4 dim columns
-    if (sl == 176) and (nt ==1) and ('t1' in s[12]):
-      info[t1w] = [s[2]] # assign if a single scan meets criteria
-    if (11 <= sl <= 22) and (nt == 1) and ('dti' in s[12]):
-      info[dwi].append(s[2]) # append if multiple scans meet criteria
+    if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
+      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+    if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
+      info[dwi].append(s.series_number) # append if multiple scans meet criteria
 ```
 
 --
@@ -276,13 +272,12 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
-    x,y,sl,nt = (s[6], s[7], s[8], s[9]) # the 4 dim columns
-    if (sl == 176) and (nt ==1) and ('t1' in s[12]):
-      info[t1w] = [s[2]] # assign if a single scan meets criteria
-    if (11 <= sl <= 22) and (nt == 1) and ('dti' in s[12]):
-      info[dwi].append(s[2]) # append if multiple scans meet criteria
-    if (nt > 10) and ('taskrest' in s[12]):
-      if s[13]: # motion corrected
+    if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
+      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+    if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
+      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+    if (s.dim4 > 10) and ('taskrest' in s.protocol_name):
+      if s.is_motion_corrected: # motion corrected
         # catch
       else:
         # catch
@@ -295,16 +290,15 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
-    x,y,sl,nt = (s[6], s[7], s[8], s[9]) # the 4 dim columns
-    if (sl == 176) and (nt ==1) and ('t1' in s[12]):
-      info[t1w] = [s[2]] # assign if a single scan meets criteria
-    if (11 <= sl <= 22) and (nt == 1) and ('dti' in s[12]):
-      info[dwi].append(s[2]) # append if multiple scans meet criteria
-    if (nt > 10) and ('taskrest' in s[12]):
-      if s[13]: # motion corrected
-        info[rest].append({'item': s[2], 'acq': 'corrected'})
+    if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
+      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+    if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
+      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+    if (s.dim4 > 10) and ('taskrest' in s.protocol_name):
+      if s.is_motion_corrected: # motion corrected
+        info[rest].append({'item': s.series_number, 'rec': 'corrected'})
       else:
-        info[rest].append({'item': s[2], 'acq': 'uncorrected'})
+        info[rest].append({'item': s.series_number, 'rec': 'uncorrected'})
 ```
 
 - Extract and label if resting state scans are motion corrected
@@ -324,21 +318,20 @@ def infotodict(seqinfo):
 
     t1w = create_key('anat/sub-{subject}_T1w')
     dwi = create_key('dwi/sub-{subject}_run-{item:01d}_dwi')
-    rest = create_key('func/sub-{subject}_task-rest_acq-{acq}_run-{item:01d}_bold')
+    rest = create_key('func/sub-{subject}_task-rest_rec-{rec}_run-{item:01d}_bold')
 
     info = {t1w: [], dwi: [], rest: []}
 
     for s in seqinfo:
-        x, y, sl, nt = (s[6], s[7], s[8], s[9])
-        if (sl == 176) and (nt ==1) and ('t1' in s[12]):
-          info[t1w] = [s[2]] # assign if a single series meets criteria
-        if (11 <= sl <= 22) and (nt == 1) and ('dti' in s[12]):
-          info[dwi].append(s[2]) # append if multiple series meet criteria
-        if (nt > 10) and ('taskrest' in s[12]):
-            if s[13]: # exclude non motion corrected series
-                info[rest].append({'item': s[2], 'acq': 'corrected'})
+        if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
+          info[t1w] = [s.series_number] # assign if a single series meets criteria
+        if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
+          info[dwi].append(s.series_number) # append if multiple series meet criteria
+        if (s.dim4 > 10) and ('taskrest' in s.protocol_name):
+            if s.is_motion_corrected: # exclude non motion corrected series
+                info[rest].append({'item': s.series_number, 'rec': 'corrected'})
             else:
-                info[rest].append({'item': s[2], 'acq': 'uncorrected'})
+                info[rest].append({'item': s.series_number, 'rec': 'uncorrected'})
     return info
 ```
 
@@ -347,7 +340,7 @@ def infotodict(seqinfo):
 
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
+-d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /convertall.py -c none -o /data/output
 ```
 
@@ -356,7 +349,7 @@ docker run --rm -it -v $PWD:/data nipy/heudiconv \
 
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
+-d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /data/phantom_heuristic.py -c none -o /data/output
 ```
 
@@ -365,7 +358,7 @@ docker run --rm -it -v $PWD:/data nipy/heudiconv \
 
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
+-d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /data/phantom_heuristic.py -c dcm2niix -o /data/output
 ```
 
@@ -374,7 +367,7 @@ docker run --rm -it -v $PWD:/data nipy/heudiconv \
 
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
--d /data/%s/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
+-d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
 -f /data/phantom_heuristic.py -c dcm2niix -b -o /data/output
 ```
 
