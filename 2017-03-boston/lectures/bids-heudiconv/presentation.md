@@ -126,16 +126,16 @@ Start out running heudiconv without any converter, just passing in dicoms.
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
 -d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
--f /convertall.py -c none -o /data/output
+-f /heuristics/convertall.py -c none -o /data/output
 ```
 
 ---
 layout: false
 ### Sample conversion
 
-Once run, you should now have a directory with your subject, and a sub-directory `info`.
+Once run, you should now have a directory with your subject, and a sub-directory `.heudiconv`.
 
-- You can see a `dicominfo.txt` - we'll be using the information here to convert to a file structure (BIDS)
+- Within `.heudiconv`, there will be a directory with your subject ID, and a subdirectory `info`. Inside this, you can see a `dicominfo.txt` - we'll be using the information here to convert to a file structure (BIDS)
 
 - The full specifications for BIDS can be found [here](http://bids.neuroimaging.io/bids_spec1.0.1.pdf)
 
@@ -341,7 +341,7 @@ def infotodict(seqinfo):
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
 -d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
--f /convertall.py -c none -o /data/output
+-f /heuristics/convertall.py -c none -o /data/output
 ```
 
 ---
