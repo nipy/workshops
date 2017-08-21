@@ -34,7 +34,7 @@ layout: false
 $ docker run -it --rm -v $PWD:/data nipype/workshops:latest-base bash
 # Inside container
 > cd /data
-> git clone http://datasets.datalad.org/test/dartmouth-siemens/PHANTOM1_3/.git
+> git clone http://datasets.datalad.org/dicoms/dartmouth-phantoms/PHANTOM1_3/.git
 > cd PHANTOM1_3
 > datalad get -J6 YAROSLAV_DBIC-TEST1/ #ensure all the data is downloaded for the demo to work!
 > exit
