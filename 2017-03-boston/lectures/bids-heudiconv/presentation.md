@@ -166,7 +166,7 @@ def infotodict(seqinfo):
     info = {data: []}
 
     for s in seqinfo:
-        info[data].append(s.series_number)
+        info[data].append(s.series_id)
     return info
 ```
 ---
@@ -224,7 +224,7 @@ for idx, s in enumerate(seqinfo):
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (sl == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
 ```
 
 ---
@@ -233,7 +233,7 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
 ```
 --
 
@@ -245,9 +245,9 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
     if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+      info[dwi].append(s.series_id) # append if multiple scans meet criteria
 ```
 
 - Notice there are two diffusion scans shown in dicom info
@@ -258,9 +258,9 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
     if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+      info[dwi].append(s.series_id) # append if multiple scans meet criteria
 ```
 
 --
@@ -273,9 +273,9 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
     if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+      info[dwi].append(s.series_id) # append if multiple scans meet criteria
     if (s.dim4 > 10) and ('taskrest' in s.protocol_name):
       if s.is_motion_corrected: # motion corrected
         # catch
@@ -291,14 +291,14 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
     if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+      info[dwi].append(s.series_id) # append if multiple scans meet criteria
     if (s.dim4 > 10) and ('taskrest' in s.protocol_name):
       if s.is_motion_corrected: # motion corrected
-        info[rest].append({'item': s.series_number, 'rec': 'corrected'})
+        info[rest].append({'item': s.series_id, 'rec': 'corrected'})
       else:
-        info[rest].append({'item': s.series_number, 'rec': 'uncorrected'})
+        info[rest].append({'item': s.series_id, 'rec': 'uncorrected'})
 ```
 
 - Extract and label if resting state scans are motion corrected
@@ -324,14 +324,14 @@ def infotodict(seqinfo):
 
     for s in seqinfo:
         if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-          info[t1w] = [s.series_number] # assign if a single series meets criteria
+          info[t1w] = [s.series_id] # assign if a single series meets criteria
         if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-          info[dwi].append(s.series_number) # append if multiple series meet criteria
+          info[dwi].append(s.series_id) # append if multiple series meet criteria
         if (s.dim4 > 10) and ('taskrest' in s.protocol_name):
             if s.is_motion_corrected: # exclude non motion corrected series
-                info[rest].append({'item': s.series_number, 'rec': 'corrected'})
+                info[rest].append({'item': s.series_id, 'rec': 'corrected'})
             else:
-                info[rest].append({'item': s.series_number, 'rec': 'uncorrected'})
+                info[rest].append({'item': s.series_id, 'rec': 'uncorrected'})
     return info
 ```
 
