@@ -34,7 +34,7 @@ layout: false
 $ docker run -it --rm -v $PWD:/data nipype/workshops:latest-base bash
 # Inside container
 > cd /data
-> git clone http://datasets.datalad.org/test/dartmouth-siemens/PHANTOM1_3/.git
+> git clone http://datasets.datalad.org/dicoms/dartmouth-phantoms/PHANTOM1_3/.git
 > cd PHANTOM1_3
 > datalad get -J6 YAROSLAV_DBIC-TEST1/ #ensure all the data is downloaded for the demo to work!
 > exit
@@ -126,16 +126,16 @@ Start out running heudiconv without any converter, just passing in dicoms.
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
 -d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
--f /convertall.py -c none -o /data/output
+-f /heuristics/convertall.py -c none -o /data/output
 ```
 
 ---
 layout: false
 ### Sample conversion
 
-Once run, you should now have a directory with your subject, and a sub-directory `info`.
+Once run, you should now have a directory with your subject, and a sub-directory `.heudiconv`.
 
-- You can see a `dicominfo.txt` - we'll be using the information here to convert to a file structure (BIDS)
+- Within `.heudiconv`, there will be a directory with your subject ID, and a subdirectory `info`. Inside this, you can see a `dicominfo.txt` - we'll be using the information here to convert to a file structure (BIDS)
 
 - The full specifications for BIDS can be found [here](http://bids.neuroimaging.io/bids_spec1.0.1.pdf)
 
@@ -166,7 +166,7 @@ def infotodict(seqinfo):
     info = {data: []}
 
     for s in seqinfo:
-        info[data].append(s.series_number)
+        info[data].append(s.series_id)
     return info
 ```
 ---
@@ -224,7 +224,7 @@ for idx, s in enumerate(seqinfo):
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (sl == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
 ```
 
 ---
@@ -233,7 +233,7 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
 ```
 --
 
@@ -245,9 +245,9 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
     if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+      info[dwi].append(s.series_id) # append if multiple scans meet criteria
 ```
 
 - Notice there are two diffusion scans shown in dicom info
@@ -258,9 +258,9 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
     if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+      info[dwi].append(s.series_id) # append if multiple scans meet criteria
 ```
 
 --
@@ -273,9 +273,9 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
     if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+      info[dwi].append(s.series_id) # append if multiple scans meet criteria
     if (s.dim4 > 10) and ('taskrest' in s.protocol_name):
       if s.is_motion_corrected: # motion corrected
         # catch
@@ -291,14 +291,14 @@ for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
 ```python
 for idx, s in enumerate(seqinfo): # each row of dicominfo.txt
     if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-      info[t1w] = [s.series_number] # assign if a single scan meets criteria
+      info[t1w] = [s.series_id] # assign if a single scan meets criteria
     if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-      info[dwi].append(s.series_number) # append if multiple scans meet criteria
+      info[dwi].append(s.series_id) # append if multiple scans meet criteria
     if (s.dim4 > 10) and ('taskrest' in s.protocol_name):
       if s.is_motion_corrected: # motion corrected
-        info[rest].append({'item': s.series_number, 'rec': 'corrected'})
+        info[rest].append({'item': s.series_id, 'rec': 'corrected'})
       else:
-        info[rest].append({'item': s.series_number, 'rec': 'uncorrected'})
+        info[rest].append({'item': s.series_id, 'rec': 'uncorrected'})
 ```
 
 - Extract and label if resting state scans are motion corrected
@@ -324,14 +324,14 @@ def infotodict(seqinfo):
 
     for s in seqinfo:
         if (s.dim3 == 176) and (s.dim4 == 1) and ('t1' in s.protocol_name):
-          info[t1w] = [s.series_number] # assign if a single series meets criteria
+          info[t1w] = [s.series_id] # assign if a single series meets criteria
         if (11 <= s.dim3 <= 22) and (s.dim4 == 1) and ('dti' in s.protocol_name):
-          info[dwi].append(s.series_number) # append if multiple series meet criteria
+          info[dwi].append(s.series_id) # append if multiple series meet criteria
         if (s.dim4 > 10) and ('taskrest' in s.protocol_name):
             if s.is_motion_corrected: # exclude non motion corrected series
-                info[rest].append({'item': s.series_number, 'rec': 'corrected'})
+                info[rest].append({'item': s.series_id, 'rec': 'corrected'})
             else:
-                info[rest].append({'item': s.series_number, 'rec': 'uncorrected'})
+                info[rest].append({'item': s.series_id, 'rec': 'uncorrected'})
     return info
 ```
 
@@ -341,7 +341,7 @@ def infotodict(seqinfo):
 ```bash
 docker run --rm -it -v $PWD:/data nipy/heudiconv \
 -d /data/{subject}/YAROSLAV_DBIC-TEST1/*/*/*IMA -s PHANTOM1_3 \
--f /convertall.py -c none -o /data/output
+-f /heuristics/convertall.py -c none -o /data/output
 ```
 
 ---
