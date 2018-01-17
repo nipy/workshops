@@ -29,9 +29,9 @@ layout: false
 * Grab the data (using datalad!)
 
 ```
-$ docker run -it --rm -v /path/to/store/dicoms:/data nipy/heudiconv:latest bash
+$ docker run -it --rm -v /path/to/store/dicoms:/data --entrypoint=bash nipy/heudiconv:latest
 # Inside container
-> cd /data
+> source activate neuro && cd /data
 > git clone http://datasets.datalad.org/dicoms/dartmouth-phantoms/PHANTOM1_3/.git
 > cd PHANTOM1_3
 > datalad get -J6 YAROSLAV_DBIC-TEST1/ #ensure all the data is downloaded for the demo to work!
